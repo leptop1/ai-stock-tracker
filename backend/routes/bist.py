@@ -146,7 +146,42 @@ def ping():
 
 @bist_bp.route("/_dt")
 def diag_endpoint():
-    return jsonify({"ok": True, "msg": "_dt endpoint not implemented yet"})
+    result = {"ok": True}
+    try:
+        import os
+        from services.bist_data import _CACHE_DIR
+        result["has_cache"] = os.path.isdir(_CACHE_DIR)
+        result["cache_dir"] = str(_CACHE_DIR)
+        if os.path.isdir(_CACHE_DIR):
+            result["n_files"] = len(os.listdir(_CACHE_DIR))
+    except Exception as e:
+        result["cache_error"] = str(e)
+
+    try:
+        from services.bist_data import get_bist_price
+        t0 = time.time()
+        p = get_bist_price("GARAN.IS")
+        t1 = time.time()
+        result["price_ms"] = round((t1 - t0) * 1000)
+        if p:
+            result["price"] = p.get("price")
+            result["price_source"] = p.get("source")
+        else:
+            result["price"] = None
+    except Exception as e:
+        result["price_error"] = str(e)
+
+    try:
+        from services.bist_data import get_bist_history
+        t0 = time.time()
+        df = get_bist_history("GARAN.IS", period="5d")
+        t1 = time.time()
+        result["history_rows"] = len(df)
+        result["history_ms"] = round((t1 - t0) * 1000)
+    except Exception as e:
+        result["history_error"] = str(e)
+
+    return jsonify(result)
 
 
 @bist_bp.route("/<path:symbol>")
