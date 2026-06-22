@@ -74,6 +74,19 @@ def get_bist_price(symbol: str) -> dict | None:
         tick = cached["tick"]
         tick["source"] = "cache"
         return tick
+    if cached and "ohlc_bars" in cached and cached["ohlc_bars"]:
+        bars = cached["ohlc_bars"]
+        last = bars[-1]
+        prev = bars[-2]["close"] if len(bars) > 1 else last["close"]
+        price = last["close"]
+        if price is not None:
+            return {
+                "symbol": symbol,
+                "price": price,
+                "previous_close": prev,
+                "volume": last.get("tickVolume"),
+                "source": "ohlc_cache",
+            }
     return None
 
 

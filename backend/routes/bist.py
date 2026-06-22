@@ -139,24 +139,6 @@ def summary():
     return jsonify(out)
 
 
-@bist_bp.route("/_diag")
-def bist_diag():
-    from services.bist_data import _CACHE_DIR, _read_cache
-    info = {
-        "cache_dir": _CACHE_DIR,
-        "cache_dir_exists": os.path.isdir(_CACHE_DIR),
-        "garan_cache_exists": os.path.isfile(os.path.join(_CACHE_DIR, "GARAN.json")),
-        "files_in_cache": [],
-    }
-    if os.path.isdir(_CACHE_DIR):
-        info["files_in_cache"] = [f for f in sorted(os.listdir(_CACHE_DIR))[:10]]
-        info["total_files"] = len(os.listdir(_CACHE_DIR))
-    garan = _read_cache("GARAN.IS")
-    info["garan_has_ohlc"] = garan and "ohlc_bars" in garan
-    info["garan_tick"] = garan.get("tick") if garan else None
-    return jsonify(info)
-
-
 @bist_bp.route("/<path:symbol>")
 def instrument_detail(symbol):
     cache_key = f"bist:detail:{symbol}"
