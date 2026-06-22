@@ -141,17 +141,42 @@ def summary():
 
 @bist_bp.route("/_diag")
 def diag_endpoint():
-    import os
-    from services.bist_data import get_bist_price, _CACHE_DIR
-    price = get_bist_price("GARAN.IS")
+    import os, time, traceback
+    from services.bist_data import get_bist_price, get_bist_history, _CACHE_DIR
+    from services.indicators import calculate_all_indicators
+    from services.signals import generate_signal
+    result = {}
+    t0 = time.time()
+    try:
+        price = get_bist_price("GARAN.IS")
+        result["get_bist_price_ok"] = price is not None
+        result["price_source"] = price.get("source") if price else None
+    except Exception as e:
+        result["get_bist_price_error"] = str(e)
+    try:
+        df = get_bist_history("GARAN.IS", period="5d")
+        result["get_bist_history_ok"] = df is not None and not df.empty
+        result["get_bist_history_rows"] = len(df) if df is not None else 0
+    except Exception as e:
+        result["get_bist_history_error"] = str(e)
+    try:
+        ind = calculate_all_indicators(df) if df is not None and not df.empty else {"latest": {}}
+        result["indicators_keys"] = list(ind.keys())
+        result["latest_keys"] = list(ind.get("latest", {}).keys())
+    except Exception as e:
+        result["indicators_error"] = str(e)
+    try:
+        sig = generate_signal(ind.get("latest", {})) if ind else None
+        result["signal"] = sig
+    except Exception as e:
+        result["signal_error"] = str(e)
+    t1 = time.time()
+    result["elapsed_ms"] = round((t1 - t0) * 1000)
+    result["has_cache"] = os.path.isdir(_CACHE_DIR)
     has_cache = os.path.isdir(_CACHE_DIR)
     files = sorted(os.listdir(_CACHE_DIR))[:5] if has_cache else []
-    return jsonify({
-        "cache_dir": _CACHE_DIR,
-        "has_cache": has_cache,
-        "garan_price": price,
-        "sample_files": files,
-    })
+    result["sample_files"] = files
+    return jsonify(result)
 
 
 @bist_bp.route("/<path:symbol>")
