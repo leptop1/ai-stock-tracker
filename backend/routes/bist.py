@@ -146,41 +146,29 @@ def ping():
 
 @bist_bp.route("/_dt")
 def diag_endpoint():
-    result = {"ok": True, "step": "start"}
-    import os, sys
-    result["step"] = "imported os"
-    import traceback
-    result["step"] = "imported traceback"
-    result["cwd"] = os.getcwd()
-    result["python"] = sys.version
+    import os, sys, time as _time
+    result = {"ok": True, "cwd": os.getcwd(), "python": sys.version}
 
     try:
-        result["step"] = "importing bist_data"
         from services.bist_data import _CACHE_DIR, get_bist_price, get_bist_history
-        result["step"] = "imported bist_data"
+        t0 = _time.time()
         result["has_cache"] = os.path.isdir(_CACHE_DIR)
-        result["cache_dir"] = str(_CACHE_DIR)
-        if os.path.isdir(_CACHE_DIR):
-            result["n_files"] = len(os.listdir(_CACHE_DIR))
+        result["n_files"] = len(os.listdir(_CACHE_DIR)) if os.path.isdir(_CACHE_DIR) else 0
 
-        t0 = time.time()
         p = get_bist_price("GARAN.IS")
-        t1 = time.time()
-        result["price_ms"] = round((t1 - t0) * 1000)
+        result["price_ms"] = round((_time.time() - t0) * 1000)
         result["price_val"] = p.get("price") if p else None
         result["price_src"] = p.get("source") if p else None
 
-        t0 = time.time()
+        t0 = _time.time()
         df = get_bist_history("GARAN.IS", period="5d")
-        t1 = time.time()
-        result["history_ms"] = round((t1 - t0) * 1000)
+        result["history_ms"] = round((_time.time() - t0) * 1000)
         result["history_rows"] = len(df) if df is not None else 0
     except Exception as e:
+        import traceback
         result["error"] = str(e)
-        result["error_type"] = str(type(e).__name__)
-        result["error_tb"] = traceback.format_exc()[:500]
+        result["error_tb"] = traceback.format_exc()[:800]
 
-    result["step"] = "end"
     return jsonify(result)
 
 
