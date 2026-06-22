@@ -146,41 +146,41 @@ def ping():
 
 @bist_bp.route("/_dt")
 def diag_endpoint():
-    result = {"ok": True}
+    result = {"ok": True, "step": "start"}
+    import os, sys
+    result["step"] = "imported os"
+    import traceback
+    result["step"] = "imported traceback"
+    result["cwd"] = os.getcwd()
+    result["python"] = sys.version
+
     try:
-        import os
-        from services.bist_data import _CACHE_DIR
+        result["step"] = "importing bist_data"
+        from services.bist_data import _CACHE_DIR, get_bist_price, get_bist_history
+        result["step"] = "imported bist_data"
         result["has_cache"] = os.path.isdir(_CACHE_DIR)
         result["cache_dir"] = str(_CACHE_DIR)
         if os.path.isdir(_CACHE_DIR):
             result["n_files"] = len(os.listdir(_CACHE_DIR))
-    except Exception as e:
-        result["cache_error"] = str(e)
 
-    try:
-        from services.bist_data import get_bist_price
         t0 = time.time()
         p = get_bist_price("GARAN.IS")
         t1 = time.time()
         result["price_ms"] = round((t1 - t0) * 1000)
-        if p:
-            result["price"] = p.get("price")
-            result["price_source"] = p.get("source")
-        else:
-            result["price"] = None
-    except Exception as e:
-        result["price_error"] = str(e)
+        result["price_val"] = p.get("price") if p else None
+        result["price_src"] = p.get("source") if p else None
 
-    try:
-        from services.bist_data import get_bist_history
         t0 = time.time()
         df = get_bist_history("GARAN.IS", period="5d")
         t1 = time.time()
-        result["history_rows"] = len(df)
         result["history_ms"] = round((t1 - t0) * 1000)
+        result["history_rows"] = len(df) if df is not None else 0
     except Exception as e:
-        result["history_error"] = str(e)
+        result["error"] = str(e)
+        result["error_type"] = str(type(e).__name__)
+        result["error_tb"] = traceback.format_exc()[:500]
 
+    result["step"] = "end"
     return jsonify(result)
 
 
