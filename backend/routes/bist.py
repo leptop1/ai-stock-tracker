@@ -151,14 +151,13 @@ def diag_endpoint():
 
     try:
         result["step"] = "importing bist_data"
-        from services.bist_data import _CACHE_DIR
-        result["step"] = "checking cache"
-        result["cache_exists"] = os.path.isdir(_CACHE_DIR)
-        result["cache_path"] = str(_CACHE_DIR)
-        if os.path.isdir(_CACHE_DIR):
-            result["n_files"] = len(os.listdir(_CACHE_DIR))
+        from services.bist_data import get_bist_price
+        result["step"] = "calling get_bist_price"
+        result["price"] = get_bist_price("GARAN.IS")
     except Exception as e:
+        import traceback
         result["error"] = str(e)
+        result["tb"] = traceback.format_exc()[:800]
 
     result["step"] = "end"
     return jsonify(result)
