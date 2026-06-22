@@ -146,22 +146,29 @@ def ping():
 
 @bist_bp.route("/_dt")
 def diag_endpoint():
-    import os, time
+    import os, time, json
     result = {"ok": True, "step": "start"}
 
     try:
-        result["step"] = "price"
-        from services.bist_data import get_bist_price, get_bist_history
-        result["step"] = "calling price"
-        t0 = time.time()
-        result["price"] = get_bist_price("GARAN.IS")
-        result["price_ms"] = round((time.time() - t0) * 1000)
+        from services.bist_data import _read_cache, _bars_to_df
+        result["step"] = "read_cache"
+        cached = _read_cache("GARAN.IS")
+        result["cached_type"] = str(type(cached).__name__) if cached else "None"
+        result["has_ohlc"] = cached and "ohlc_bars" in cached
 
-        result["step"] = "calling get_bist_history"
-        t0 = time.time()
-        df = get_bist_history("GARAN.IS", period="5d")
-        result["history_ms"] = round((time.time() - t0) * 1000)
-        result["history_rows"] = len(df) if df is not None else 0
+        if cached and "ohlc_bars" in cached and cached["ohlc_bars"]:
+            result["step"] = "bars_to_df"
+            bars = cached["ohlc_bars"]
+            result["n_bars"] = len(bars)
+            result["bar_0_keys"] = list(bars[0].keys()) if bars else []
+
+            result["step"] = "calling _bars_to_df"
+            df = _bars_to_df(bars)
+            result["df_type"] = str(type(df).__name__)
+            result["df_empty"] = df is None or df.empty
+            if df is not None:
+                result["df_len"] = len(df)
+                result["df_cols"] = list(df.columns)
     except Exception as e:
         import traceback
         result["error"] = str(e)
