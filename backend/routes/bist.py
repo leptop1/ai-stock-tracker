@@ -139,7 +139,7 @@ def summary():
     return jsonify(out)
 
 
-@bist_bp.route("/_diag")
+@bist_bp.route("/_dt")
 def diag_endpoint():
     import os, time
     from services.bist_data import get_bist_price, get_bist_history, _CACHE_DIR
@@ -148,32 +148,31 @@ def diag_endpoint():
     result = {}
     t0 = time.time()
     for label, fn in [
-        ("get_bist_price", lambda: get_bist_price("GARAN.IS")),
-        ("get_bist_history", lambda: get_bist_history("GARAN.IS", period="5d")),
+        ("price", lambda: get_bist_price("GARAN.IS")),
+        ("history", lambda: get_bist_history("GARAN.IS", period="5d")),
     ]:
         try:
             v = fn()
             result[label] = str(type(v).__name__)
         except Exception as e:
-            result[label] = f"ERROR: {e}"
-    if True:
-        df = get_bist_history("GARAN.IS", period="5d")
+            result[label] = f"ERR: {e}"
+    df = get_bist_history("GARAN.IS", period="5d")
+    try:
+        ind = calculate_all_indicators(df)
+        result["indicators"] = f"OK keys={len(ind)}"
+    except Exception as e:
+        result["indicators"] = f"ERR: {e}"
+    if "indicators" in result and result["indicators"].startswith("OK"):
         try:
-            ind = calculate_all_indicators(df)
-            result["calc_all_indicators"] = f"OK keys={len(ind)}"
+            sig = generate_signal(ind["latest"])
+            result["signal"] = f"OK sig={sig['signal']}"
         except Exception as e:
-            result["calc_all_indicators"] = f"ERROR: {e}"
-        if "calc_all_indicators" in result and "ERROR" not in result["calc_all_indicators"]:
-            try:
-                sig = generate_signal(ind["latest"])
-                result["generate_signal"] = f"OK signal={sig['signal']}"
-            except Exception as e:
-                result["generate_signal"] = f"ERROR: {e}"
+            result["signal"] = f"ERR: {e}"
     t1 = time.time()
-    result["elapsed_ms"] = round((t1 - t0) * 1000)
+    result["ms"] = round((t1 - t0) * 1000)
     result["has_cache"] = os.path.isdir(_CACHE_DIR)
     if os.path.isdir(_CACHE_DIR):
-        result["total_files"] = len(os.listdir(_CACHE_DIR))
+        result["n_files"] = len(os.listdir(_CACHE_DIR))
     return jsonify(result)
 
 
