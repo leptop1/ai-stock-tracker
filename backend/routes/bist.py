@@ -146,29 +146,12 @@ def ping():
 
 @bist_bp.route("/_dt")
 def diag_endpoint():
-    import os, sys, time as _time
-    result = {"ok": True, "cwd": os.getcwd(), "python": sys.version}
-
-    try:
-        from services.bist_data import _CACHE_DIR, get_bist_price, get_bist_history
-        t0 = _time.time()
-        result["has_cache"] = os.path.isdir(_CACHE_DIR)
-        result["n_files"] = len(os.listdir(_CACHE_DIR)) if os.path.isdir(_CACHE_DIR) else 0
-
-        p = get_bist_price("GARAN.IS")
-        result["price_ms"] = round((_time.time() - t0) * 1000)
-        result["price_val"] = p.get("price") if p else None
-        result["price_src"] = p.get("source") if p else None
-
-        t0 = _time.time()
-        df = get_bist_history("GARAN.IS", period="5d")
-        result["history_ms"] = round((_time.time() - t0) * 1000)
-        result["history_rows"] = len(df) if df is not None else 0
-    except Exception as e:
-        import traceback
-        result["error"] = str(e)
-        result["error_tb"] = traceback.format_exc()[:800]
-
+    import os
+    result = {
+        "ok": True,
+        "cwd": os.getcwd(),
+        "files": sorted(os.listdir("."))[:20],
+    }
     return jsonify(result)
 
 
