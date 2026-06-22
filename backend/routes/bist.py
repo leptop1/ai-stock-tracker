@@ -141,41 +141,39 @@ def summary():
 
 @bist_bp.route("/_diag")
 def diag_endpoint():
-    import os, time, traceback
+    import os, time
     from services.bist_data import get_bist_price, get_bist_history, _CACHE_DIR
     from services.indicators import calculate_all_indicators
     from services.signals import generate_signal
     result = {}
     t0 = time.time()
-    try:
-        price = get_bist_price("GARAN.IS")
-        result["get_bist_price_ok"] = price is not None
-        result["price_source"] = price.get("source") if price else None
-    except Exception as e:
-        result["get_bist_price_error"] = str(e)
-    try:
+    for label, fn in [
+        ("get_bist_price", lambda: get_bist_price("GARAN.IS")),
+        ("get_bist_history", lambda: get_bist_history("GARAN.IS", period="5d")),
+    ]:
+        try:
+            v = fn()
+            result[label] = str(type(v).__name__)
+        except Exception as e:
+            result[label] = f"ERROR: {e}"
+    if True:
         df = get_bist_history("GARAN.IS", period="5d")
-        result["get_bist_history_ok"] = df is not None and not df.empty
-        result["get_bist_history_rows"] = len(df) if df is not None else 0
-    except Exception as e:
-        result["get_bist_history_error"] = str(e)
-    try:
-        ind = calculate_all_indicators(df) if df is not None and not df.empty else {"latest": {}}
-        result["indicators_keys"] = list(ind.keys())
-        result["latest_keys"] = list(ind.get("latest", {}).keys())
-    except Exception as e:
-        result["indicators_error"] = str(e)
-    try:
-        sig = generate_signal(ind.get("latest", {})) if ind else None
-        result["signal"] = sig
-    except Exception as e:
-        result["signal_error"] = str(e)
+        try:
+            ind = calculate_all_indicators(df)
+            result["calc_all_indicators"] = f"OK keys={len(ind)}"
+        except Exception as e:
+            result["calc_all_indicators"] = f"ERROR: {e}"
+        if "calc_all_indicators" in result and "ERROR" not in result["calc_all_indicators"]:
+            try:
+                sig = generate_signal(ind["latest"])
+                result["generate_signal"] = f"OK signal={sig['signal']}"
+            except Exception as e:
+                result["generate_signal"] = f"ERROR: {e}"
     t1 = time.time()
     result["elapsed_ms"] = round((t1 - t0) * 1000)
     result["has_cache"] = os.path.isdir(_CACHE_DIR)
-    has_cache = os.path.isdir(_CACHE_DIR)
-    files = sorted(os.listdir(_CACHE_DIR))[:5] if has_cache else []
-    result["sample_files"] = files
+    if os.path.isdir(_CACHE_DIR):
+        result["total_files"] = len(os.listdir(_CACHE_DIR))
     return jsonify(result)
 
 

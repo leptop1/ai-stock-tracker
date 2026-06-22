@@ -1,11 +1,7 @@
 import pandas as pd
 import numpy as np
 
-try:
-    import ta
-    HAS_TA = True
-except ImportError:
-    HAS_TA = False
+HAS_TA = False
 
 
 def _series_to_list(s):
@@ -16,62 +12,61 @@ def _series_to_list(s):
 
 
 def calculate_rsi(df: pd.DataFrame, window: int = 14) -> pd.Series:
-    if not HAS_TA or len(df) < window + 1:
+    if len(df) < window + 1:
         return pd.Series([None] * len(df), index=df.index)
-    return ta.momentum.RSIIndicator(close=df["Close"], window=window).rsi()
+    delta = df["Close"].diff()
+    gain = delta.where(delta > 0, 0).rolling(window).mean()
+    loss = (-delta.where(delta < 0, 0)).rolling(window).mean()
+    rs = gain / loss.replace(0, np.nan)
+    rsi = 100 - (100 / (1 + rs))
+    return rsi
 
 
 def calculate_macd(df: pd.DataFrame) -> dict:
-    if not HAS_TA or len(df) < 35:
+    if len(df) < 35:
         empty = pd.Series([None] * len(df), index=df.index)
         return {"macd_line": empty, "signal_line": empty, "histogram": empty}
-    macd = ta.trend.MACD(close=df["Close"], window_slow=26, window_fast=12, window_sign=9)
-    return {
-        "macd_line": macd.macd(),
-        "signal_line": macd.macd_signal(),
-        "histogram": macd.macd_diff(),
-    }
+    close = df["Close"]
+    ema12 = close.ewm(span=12, adjust=False).mean()
+    ema26 = close.ewm(span=26, adjust=False).mean()
+    macd_line = ema12 - ema26
+    signal_line = macd_line.ewm(span=9, adjust=False).mean()
+    histogram = macd_line - signal_line
+    return {"macd_line": macd_line, "signal_line": signal_line, "histogram": histogram}
 
 
 def calculate_bollinger_bands(df: pd.DataFrame, window: int = 20) -> dict:
-    if not HAS_TA or len(df) < window:
+    if len(df) < window:
         empty = pd.Series([None] * len(df), index=df.index)
         return {"upper": empty, "middle": empty, "lower": empty, "percent_b": empty, "bandwidth": empty}
-    bb = ta.volatility.BollingerBands(close=df["Close"], window=window, window_dev=2)
-    return {
-        "upper": bb.bollinger_hband(),
-        "middle": bb.bollinger_mavg(),
-        "lower": bb.bollinger_lband(),
-        "percent_b": bb.bollinger_pband(),
-        "bandwidth": bb.bollinger_wband(),
-    }
+    close = df["Close"]
+    middle = close.rolling(window).mean()
+    std = close.rolling(window).std()
+    upper = middle + 2 * std
+    lower = middle - 2 * std
+    percent_b = (close - lower) / (upper - lower).replace(0, np.nan)
+    bandwidth = (upper - lower) / middle.replace(0, np.nan) * 100
+    return {"upper": upper, "middle": middle, "lower": lower, "percent_b": percent_b, "bandwidth": bandwidth}
 
 
 def calculate_supertrend(df: pd.DataFrame, period: int = 10, multiplier: float = 3.0) -> dict:
-    """Supertrend indikatörü hesaplama."""
     if len(df) < period:
         return {"supertrend": pd.Series([None] * len(df), index=df.index),
                 "supertrend_direction": pd.Series([None] * len(df), index=df.index)}
-
     high = df["High"]
     low = df["Low"]
     close = df["Close"]
-
     tr = pd.concat([
         high - low,
         abs(high - close.shift(1)),
         abs(low - close.shift(1))
     ], axis=1).max(axis=1)
-
     atr = tr.rolling(period).mean()
-
     hl_avg = (high + low) / 2
     upper_band = hl_avg + multiplier * atr
     lower_band = hl_avg - multiplier * atr
-
     supertrend = pd.Series([0.0] * len(df), index=df.index)
-    direction = pd.Series([1] * len(df), index=df.index)  # 1=UP, -1=DOWN
-
+    direction = pd.Series([1] * len(df), index=df.index)
     for i in range(1, len(df)):
         if close.iloc[i] > upper_band.iloc[i - 1]:
             direction.iloc[i] = 1
@@ -83,27 +78,17 @@ def calculate_supertrend(df: pd.DataFrame, period: int = 10, multiplier: float =
                 lower_band.iloc[i] = lower_band.iloc[i - 1]
             if direction.iloc[i] == -1 and upper_band.iloc[i] > upper_band.iloc[i - 1]:
                 upper_band.iloc[i] = upper_band.iloc[i - 1]
-
         supertrend.iloc[i] = lower_band.iloc[i] if direction.iloc[i] == 1 else upper_band.iloc[i]
-
-    return {
-        "supertrend": supertrend,
-        "supertrend_direction": direction,
-        "atr": atr,
-    }
+    return {"supertrend": supertrend, "supertrend_direction": direction, "atr": atr}
 
 
 def calculate_moving_averages(df: pd.DataFrame) -> dict:
-    """EMA ve SMA hesaplama."""
     result = {}
     for window in [10, 20, 50, 200]:
         col_sma = f"sma_{window}"
         col_ema = f"ema_{window}"
         result[col_sma] = df["Close"].rolling(window).mean()
-        if HAS_TA:
-            result[col_ema] = ta.trend.EMAIndicator(close=df["Close"], window=window).ema_indicator()
-        else:
-            result[col_ema] = df["Close"].ewm(span=window, adjust=False).mean()
+        result[col_ema] = df["Close"].ewm(span=window, adjust=False).mean()
     return result
 
 
@@ -120,14 +105,10 @@ def calculate_volume_analysis(df: pd.DataFrame) -> dict:
     ratio_10 = float(current_vol / avg_vol_10_val) if avg_vol_10_val and avg_vol_10_val > 0 else None
     ratio_20 = float(current_vol / avg_vol_20_val) if avg_vol_20_val and avg_vol_20_val > 0 else None
     obv = None
-    vpt = None
-    if HAS_TA:
-        try:
-            obv = ta.volume.OnBalanceVolumeIndicator(
-                close=df["Close"], volume=df["Volume"]
-            ).on_balance_volume()
-        except Exception:
-            pass
+    try:
+        obv = (df["Volume"] * (df["Close"].diff().apply(lambda x: 1 if x > 0 else (-1 if x < 0 else 0)))).cumsum()
+    except Exception:
+        pass
     vpt_values = [0.0]
     for i in range(1, len(df)):
         pct_change = (df["Close"].iloc[i] - df["Close"].iloc[i - 1]) / df["Close"].iloc[i - 1]
@@ -143,7 +124,6 @@ def calculate_volume_analysis(df: pd.DataFrame) -> dict:
 
 
 def calculate_atr(df: pd.DataFrame, period: int = 14) -> pd.Series:
-    """Average True Range hesaplama."""
     if len(df) < period + 1:
         return pd.Series([None] * len(df), index=df.index)
     high = df["High"]
