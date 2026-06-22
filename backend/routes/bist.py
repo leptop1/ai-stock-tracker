@@ -139,6 +139,21 @@ def summary():
     return jsonify(out)
 
 
+@bist_bp.route("/_diag")
+def diag_endpoint():
+    import os
+    from services.bist_data import get_bist_price, _CACHE_DIR
+    price = get_bist_price("GARAN.IS")
+    has_cache = os.path.isdir(_CACHE_DIR)
+    files = sorted(os.listdir(_CACHE_DIR))[:5] if has_cache else []
+    return jsonify({
+        "cache_dir": _CACHE_DIR,
+        "has_cache": has_cache,
+        "garan_price": price,
+        "sample_files": files,
+    })
+
+
 @bist_bp.route("/<path:symbol>")
 def instrument_detail(symbol):
     cache_key = f"bist:detail:{symbol}"
