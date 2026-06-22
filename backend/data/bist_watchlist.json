@@ -1,0 +1,274 @@
+{
+  "instruments": [
+    {
+      "symbol": "AKBNK.IS",
+      "name": "Akbank",
+      "category": "Bankacılık"
+    },
+    {
+      "symbol": "ALARK.IS",
+      "name": "Alarko Holding",
+      "category": "Holding"
+    },
+    {
+      "symbol": "ARCLK.IS",
+      "name": "Arçelik",
+      "category": "Dayanıklı Tüketim"
+    },
+    {
+      "symbol": "ASELS.IS",
+      "name": "Aselsan",
+      "category": "Savunma"
+    },
+    {
+      "symbol": "ASTOR.IS",
+      "name": "Astor Enerji",
+      "category": "Enerji"
+    },
+    {
+      "symbol": "AYGAZ.IS",
+      "name": "Aygaz",
+      "category": "Enerji"
+    },
+    {
+      "symbol": "BIMAS.IS",
+      "name": "BİM Mağazaları",
+      "category": "Perakende"
+    },
+    {
+      "symbol": "BRISA.IS",
+      "name": "Brisa",
+      "category": "Otomotiv Yan"
+    },
+    {
+      "symbol": "BRSAN.IS",
+      "name": "Borusan",
+      "category": "Metal"
+    },
+    {
+      "symbol": "CCOLA.IS",
+      "name": "Coca Cola İçecek",
+      "category": "Gıda"
+    },
+    {
+      "symbol": "CIMSA.IS",
+      "name": "Çimsa",
+      "category": "İnşaat"
+    },
+    {
+      "symbol": "DOAS.IS",
+      "name": "Doğuş Otomotiv",
+      "category": "Otomotiv"
+    },
+    {
+      "symbol": "DOHOL.IS",
+      "name": "Doğan Holding",
+      "category": "Holding"
+    },
+    {
+      "symbol": "EKGYO.IS",
+      "name": "Emlak Konut GYO",
+      "category": "GYO"
+    },
+    {
+      "symbol": "ENKAI.IS",
+      "name": "Enka İnşaat",
+      "category": "İnşaat"
+    },
+    {
+      "symbol": "EREGL.IS",
+      "name": "Ereğli Demir Çelik",
+      "category": "Metal"
+    },
+    {
+      "symbol": "FROTO.IS",
+      "name": "Ford Otosan",
+      "category": "Otomotiv"
+    },
+    {
+      "symbol": "GARAN.IS",
+      "name": "Garanti BBVA",
+      "category": "Bankacılık"
+    },
+    {
+      "symbol": "GUBRF.IS",
+      "name": "Gübre Fabrikaları",
+      "category": "Kimya"
+    },
+    {
+      "symbol": "HALKB.IS",
+      "name": "Halkbank",
+      "category": "Bankacılık"
+    },
+    {
+      "symbol": "HEKTS.IS",
+      "name": "Heksagon Kimya",
+      "category": "Kimya"
+    },
+    {
+      "symbol": "IPEKE.IS",
+      "name": "İpek Doğal Enerji",
+      "category": "Enerji"
+    },
+    {
+      "symbol": "ISCTR.IS",
+      "name": "İş Bankası C",
+      "category": "Bankacılık"
+    },
+    {
+      "symbol": "KCHOL.IS",
+      "name": "Koç Holding",
+      "category": "Holding"
+    },
+    {
+      "symbol": "KOZAA.IS",
+      "name": "Koza Madencilik",
+      "category": "Madencilik"
+    },
+    {
+      "symbol": "KOZAL.IS",
+      "name": "Koza Altın",
+      "category": "Madencilik"
+    },
+    {
+      "symbol": "KRDMD.IS",
+      "name": "Kardemir D",
+      "category": "Metal"
+    },
+    {
+      "symbol": "MAVI.IS",
+      "name": "Mavi Giyim",
+      "category": "Perakende"
+    },
+    {
+      "symbol": "MGROS.IS",
+      "name": "Migros",
+      "category": "Perakende"
+    },
+    {
+      "symbol": "MPARK.IS",
+      "name": "MLP Sağlık",
+      "category": "Sağlık"
+    },
+    {
+      "symbol": "NUHCM.IS",
+      "name": "Nuh Çimento",
+      "category": "İnşaat"
+    },
+    {
+      "symbol": "ODAS.IS",
+      "name": "Odaş Elektrik",
+      "category": "Enerji"
+    },
+    {
+      "symbol": "OTKAR.IS",
+      "name": "Otokar",
+      "category": "Savunma"
+    },
+    {
+      "symbol": "OYAKC.IS",
+      "name": "Oyak Çimento",
+      "category": "İnşaat"
+    },
+    {
+      "symbol": "PGSUS.IS",
+      "name": "Pegasus",
+      "category": "Ulaşım"
+    },
+    {
+      "symbol": "SAHOL.IS",
+      "name": "Sabancı Holding",
+      "category": "Holding"
+    },
+    {
+      "symbol": "SASA.IS",
+      "name": "Sasa Polyester",
+      "category": "Kimya"
+    },
+    {
+      "symbol": "SISE.IS",
+      "name": "Şişe Cam",
+      "category": "Cam"
+    },
+    {
+      "symbol": "SOKM.IS",
+      "name": "Şok Marketler",
+      "category": "Perakende"
+    },
+    {
+      "symbol": "TAVHL.IS",
+      "name": "TAV Havalimanları",
+      "category": "Holding"
+    },
+    {
+      "symbol": "TCELL.IS",
+      "name": "Turkcell",
+      "category": "Telekomünikasyon"
+    },
+    {
+      "symbol": "THYAO.IS",
+      "name": "Türk Hava Yolları",
+      "category": "Ulaşım"
+    },
+    {
+      "symbol": "TKFEN.IS",
+      "name": "Tekfen",
+      "category": "İnşaat"
+    },
+    {
+      "symbol": "TOASO.IS",
+      "name": "Tofaş",
+      "category": "Otomotiv"
+    },
+    {
+      "symbol": "TRKCM.IS",
+      "name": "Trakyacam",
+      "category": "Cam"
+    },
+    {
+      "symbol": "TSKB.IS",
+      "name": "TSKB",
+      "category": "Bankacılık"
+    },
+    {
+      "symbol": "TTKOM.IS",
+      "name": "Türk Telekom",
+      "category": "Telekomünikasyon"
+    },
+    {
+      "symbol": "TTRAK.IS",
+      "name": "Türk Traktör",
+      "category": "Otomotiv"
+    },
+    {
+      "symbol": "TUPRS.IS",
+      "name": "Tüpraş",
+      "category": "Enerji"
+    },
+    {
+      "symbol": "ULKER.IS",
+      "name": "Ülker",
+      "category": "Gıda"
+    },
+    {
+      "symbol": "VAKBN.IS",
+      "name": "Vakıfbank",
+      "category": "Bankacılık"
+    },
+    {
+      "symbol": "VESTL.IS",
+      "name": "Vestel",
+      "category": "Dayanıklı Tüketim"
+    },
+    {
+      "symbol": "YKBNK.IS",
+      "name": "Yapı Kredi",
+      "category": "Bankacılık"
+    },
+    {
+      "symbol": "ZOREN.IS",
+      "name": "Zorlu Enerji",
+      "category": "Enerji"
+    }
+  ]
+}

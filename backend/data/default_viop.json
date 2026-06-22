@@ -1,0 +1,22 @@
+{
+  "instruments": [
+    {"symbol": "XU030.IS", "name": "BIST 30", "category": "Endeks", "currency": "TRY"},
+    {"symbol": "XU100.IS", "name": "BIST 100", "category": "Endeks", "currency": "TRY"},
+    {"symbol": "USDTRY=X", "name": "USD/TRY", "category": "Döviz", "currency": "TRY"},
+    {"symbol": "EURTRY=X", "name": "EUR/TRY", "category": "Döviz", "currency": "TRY"},
+    {"symbol": "GBPTRY=X", "name": "GBP/TRY", "category": "Döviz", "currency": "TRY"},
+    {"symbol": "GC=F", "name": "Altın Futures", "category": "Emtia", "currency": "USD"},
+    {"symbol": "SI=F", "name": "Gümüş Futures", "category": "Emtia", "currency": "USD"},
+    {"symbol": "CL=F", "name": "Ham Petrol Futures", "category": "Emtia", "currency": "USD"},
+    {"symbol": "GARAN.IS", "name": "Garanti Bankası", "category": "Hisse", "currency": "TRY"},
+    {"symbol": "AKBNK.IS", "name": "Akbank", "category": "Hisse", "currency": "TRY"},
+    {"symbol": "THYAO.IS", "name": "Türk Hava Yolları", "category": "Hisse", "currency": "TRY"},
+    {"symbol": "EREGL.IS", "name": "Ereğli Demir Çelik", "category": "Hisse", "currency": "TRY"},
+    {"symbol": "KCHOL.IS", "name": "Koç Holding", "category": "Hisse", "currency": "TRY"},
+    {"symbol": "SAHOL.IS", "name": "Sabancı Holding", "category": "Hisse", "currency": "TRY"},
+    {"symbol": "SISE.IS", "name": "Şişe Cam", "category": "Hisse", "currency": "TRY"},
+    {"symbol": "TCELL.IS", "name": "Turkcell", "category": "Hisse", "currency": "TRY"},
+    {"symbol": "BIMAS.IS", "name": "BİM Mağazalar", "category": "Hisse", "currency": "TRY"},
+    {"symbol": "ASELS.IS", "name": "Aselsan", "category": "Hisse", "currency": "TRY"}
+  ]
+}
