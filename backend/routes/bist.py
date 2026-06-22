@@ -146,42 +146,7 @@ def ping():
 
 @bist_bp.route("/_dt")
 def diag_endpoint():
-    try:
-        import os, time
-        from services.bist_data import get_bist_price, get_bist_history, _CACHE_DIR
-        from services.indicators import calculate_all_indicators
-        from services.signals import generate_signal
-        result = {}
-        t0 = time.time()
-        for label, fn in [
-            ("price", lambda: get_bist_price("GARAN.IS")),
-            ("history", lambda: get_bist_history("GARAN.IS", period="5d")),
-        ]:
-            try:
-                v = fn()
-                result[label] = str(type(v).__name__)
-            except Exception as e:
-                result[label] = f"ERR: {e}"
-        df = get_bist_history("GARAN.IS", period="5d")
-        try:
-            ind = calculate_all_indicators(df)
-            result["indicators"] = f"OK keys={len(ind)}"
-        except Exception as e:
-            result["indicators"] = f"ERR: {e}"
-        if "indicators" in result and result["indicators"].startswith("OK"):
-            try:
-                sig = generate_signal(ind["latest"])
-                result["signal"] = f"OK sig={sig['signal']}"
-            except Exception as e:
-                result["signal"] = f"ERR: {e}"
-        t1 = time.time()
-        result["ms"] = round((t1 - t0) * 1000)
-        result["has_cache"] = os.path.isdir(_CACHE_DIR)
-        if os.path.isdir(_CACHE_DIR):
-            result["n_files"] = len(os.listdir(_CACHE_DIR))
-        return jsonify(result)
-    except Exception as e:
-        return jsonify({"error": str(e), "type": str(type(e).__name__)}), 200
+    return jsonify({"ok": True, "msg": "_dt endpoint not implemented yet"})
 
 
 @bist_bp.route("/<path:symbol>")
