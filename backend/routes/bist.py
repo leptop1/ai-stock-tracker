@@ -150,14 +150,23 @@ def diag_endpoint():
     result = {"ok": True, "step": "start"}
 
     try:
-        result["step"] = "importing bist_data"
-        from services.bist_data import get_bist_price
-        result["step"] = "calling get_bist_price"
+        result["step"] = "price"
+        from services.bist_data import get_bist_price, get_bist_history
+        result["step"] = "calling price"
+        t0 = time.time()
         result["price"] = get_bist_price("GARAN.IS")
+        result["price_ms"] = round((time.time() - t0) * 1000)
+
+        result["step"] = "calling get_bist_history"
+        t0 = time.time()
+        df = get_bist_history("GARAN.IS", period="5d")
+        result["history_ms"] = round((time.time() - t0) * 1000)
+        result["history_rows"] = len(df) if df is not None else 0
     except Exception as e:
         import traceback
         result["error"] = str(e)
         result["tb"] = traceback.format_exc()[:800]
+        result["step"] = "ERROR"
 
     result["step"] = "end"
     return jsonify(result)
