@@ -146,12 +146,21 @@ def ping():
 
 @bist_bp.route("/_dt")
 def diag_endpoint():
-    import os
-    result = {
-        "ok": True,
-        "cwd": os.getcwd(),
-        "files": sorted(os.listdir("."))[:20],
-    }
+    import os, time
+    result = {"ok": True, "step": "start"}
+
+    try:
+        result["step"] = "importing bist_data"
+        from services.bist_data import _CACHE_DIR
+        result["step"] = "checking cache"
+        result["cache_exists"] = os.path.isdir(_CACHE_DIR)
+        result["cache_path"] = str(_CACHE_DIR)
+        if os.path.isdir(_CACHE_DIR):
+            result["n_files"] = len(os.listdir(_CACHE_DIR))
+    except Exception as e:
+        result["error"] = str(e)
+
+    result["step"] = "end"
     return jsonify(result)
 
 
