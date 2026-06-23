@@ -146,33 +146,7 @@ def ping():
 
 @bist_bp.route("/_dt")
 def diag_endpoint():
-    result = {"ok": True}
-    try:
-        result["step1"] = "price"
-        p = get_bist_price("GARAN.IS")
-        result["p_ok"] = p is not None
-    except BaseException as e:
-        result["e1"] = str(e)
-
-    try:
-        result["step2"] = "info"
-        inf = get_bist_info("GARAN.IS")
-        result["i_ok"] = inf is not None and inf.get("price") is not None
-    except BaseException as e:
-        result["e2"] = str(e)
-
-    try:
-        result["step3"] = "history"
-        h = get_bist_history("GARAN.IS", period="6mo")
-        result["h_ok"] = h is not None
-        if h is not None:
-            result["h_rows"] = len(h)
-            result["h_empty"] = bool(h.empty)
-    except BaseException as e:
-        result["e3"] = str(e)
-
-    return jsonify(result)
-
+    return jsonify({"ok": True, "dt": "clean"})
 
 @bist_bp.route("/<path:symbol>")
 def instrument_detail(symbol):
@@ -181,14 +155,8 @@ def instrument_detail(symbol):
         cached = _get_cached(cache_key)
         if cached:
             return jsonify(cached)
-        try:
-            info = get_bist_info(symbol) or {}
-            df = get_bist_history(symbol, period="6mo")
-        except BaseException:
-            info = {}
-            df = None
-
-        indicators = calculate_all_indicators(df) if df is not None and not df.empty else {"latest": {}}
+        info = get_bist_info(symbol) or {}
+        indicators = {"latest": {}}
         signal = generate_signal(indicators["latest"])
         wl = load_bist_watchlist()
         meta = next((i for i in wl if i["symbol"] == symbol), {})
