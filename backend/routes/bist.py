@@ -119,6 +119,9 @@ def _fetch_prices_batch(symbols: list[str]) -> dict:
 
 @bist_bp.route("/summary")
 def summary():
+    cached = _get_cached("summary")
+    if cached:
+        return jsonify(cached)
     instruments = load_bist_watchlist()
     prices = _fetch_prices_batch([i["symbol"] for i in instruments])
     out = []
@@ -161,6 +164,7 @@ def summary():
             "signal": "N/A", "score": 0, "confidence": "LOW",
             "rsi": rsi_val, "sma_20": sma_20_val, "avg_volume_10": avg_vol_10,
         })
+    _set_cached("summary", out)
     return jsonify(out)
 
 

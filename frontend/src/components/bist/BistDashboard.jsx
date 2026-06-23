@@ -1,7 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useBistStore } from '../../store/bistStore'
 import BistCard from './BistCard'
-import { RefreshCw, Filter } from 'lucide-react'
+import { RefreshCw, Filter, ChevronDown, ChevronUp } from 'lucide-react'
+
+const PAGE_SIZE = 30
 
 const CAT_COLORS = {
   'Bankacılık': 'text-blue-400',      'Holding': 'text-gray-400',
@@ -46,44 +48,50 @@ const FILTERS = [
 export default function BistDashboard() {
   const { summaries, loading, lastRefresh, fetchSummaries, selectSymbol, selectedSymbol, removeInstrument } = useBistStore()
   const [filter, setFilter] = useState('all')
+  const [visible, setVisible] = useState(PAGE_SIZE)
 
   useEffect(() => {
     fetchSummaries()
-    const interval = setInterval(fetchSummaries, 14400000) // 4 saat
+    const interval = setInterval(fetchSummaries, 14400000)
     return () => clearInterval(interval)
   }, [])
 
-  // Yeşile dönenleri bildir
   useEffect(() => {
-    if (summaries.length === 0) return
+    if (!Array.isArray(summaries) || summaries.length === 0) return
     if (!("Notification" in window)) return
-    if (Notification.permission === "default") Notification.requestPermission()
-    if (Notification.permission !== "granted") return
-
-    const prev = JSON.parse(sessionStorage.getItem("bist_snap") || "[]")
-    const prevGreen = new Set(prev.filter(isGreen).map(s => s.symbol))
-    for (const s of summaries) {
-      if (isGreen(s) && !prevGreen.has(s.symbol)) {
-        new Notification("🟢 Yeni Yeşil Sinyal", {
-          body: `${s.name} (${s.symbol}) — 🟢 kriterleri karşılıyor!`,
-          silent: true,
-        })
+    try {
+      if (Notification.permission === "default") Notification.requestPermission()
+      if (Notification.permission !== "granted") return
+      const prev = JSON.parse(sessionStorage.getItem("bist_snap") || "[]")
+      const prevGreen = new Set(prev.filter(isGreen).map(s => s.symbol))
+      for (const s of summaries) {
+        if (s && isGreen(s) && !prevGreen.has(s.symbol)) {
+          new Notification("🟢 Yeni Yeşil Sinyal", {
+            body: `${s.name} (${s.symbol}) — 🟢 kriterleri karşılıyor!`,
+            silent: true,
+          })
+        }
       }
-    }
-    sessionStorage.setItem("bist_snap", JSON.stringify(summaries))
+      sessionStorage.setItem("bist_snap", JSON.stringify(summaries))
+    } catch {}
   }, [summaries])
 
-  const grouped = {}
-  for (const s of summaries) {
-    if (filter === 'green' && !isGreen(s)) continue
-    if (filter === 'red' && isGreen(s)) continue
-    const cat = s.category || 'Diğer'
-    if (!grouped[cat]) grouped[cat] = []
-    grouped[cat].push(s)
-  }
+  const grouped = useMemo(() => {
+    if (!Array.isArray(summaries)) return {}
+    const g = {}
+    for (const s of summaries) {
+      if (!s) continue
+      if (filter === 'green' && !isGreen(s)) continue
+      if (filter === 'red' && isGreen(s)) continue
+      const cat = s.category || 'Diğer'
+      if (!g[cat]) g[cat] = []
+      g[cat].push(s)
+    }
+    return g
+  }, [summaries, filter])
 
-  const greenCount = summaries.filter(isGreen).length
-  const redCount = summaries.length - greenCount
+  const greenCount = Array.isArray(summaries) ? summaries.filter(isGreen).length : 0
+  const redCount = Array.isArray(summaries) ? summaries.length - greenCount : 0
 
   return (
     <div className="flex-1 p-6">
@@ -125,12 +133,14 @@ export default function BistDashboard() {
         ))}
       </div>
 
-      {loading.summary && summaries.length === 0 ? (
+      {loading.summary && (!Array.isArray(summaries) || summaries.length === 0) ? (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {Array.from({ length: 12 }).map((_, i) => (
             <div key={i} className="bg-gray-800 rounded-xl border border-gray-700 p-4 animate-pulse h-40" />
           ))}
         </div>
+      ) : !Array.isArray(summaries) ? (
+        <div className="text-center py-12 text-gray-500">Veri yüklenemedi</div>
       ) : (
         <div className="space-y-8">
           {CAT_ORDER.map(cat => {
@@ -142,7 +152,7 @@ export default function BistDashboard() {
                   {cat}
                 </h3>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                  {items.map(instrument => (
+                  {items.slice(0, visible).map(instrument => (
                     <BistCard
                       key={instrument.symbol}
                       instrument={instrument}
@@ -155,6 +165,28 @@ export default function BistDashboard() {
               </div>
             )
           })}
+          {summaries.length > visible && (
+            <div className="flex justify-center pb-8">
+              <button
+                onClick={() => setVisible(v => v + PAGE_SIZE)}
+                className="flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-gray-200 px-6 py-2 rounded-lg text-sm transition-colors"
+              >
+                <ChevronDown size={16} />
+                Daha Fazla Göster ({summaries.length - visible} kalan)
+              </button>
+            </div>
+          )}
+          {visible >= summaries.length && summaries.length > PAGE_SIZE && (
+            <div className="flex justify-center pb-4">
+              <button
+                onClick={() => setVisible(PAGE_SIZE)}
+                className="flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-gray-200 px-4 py-1.5 rounded-lg text-xs transition-colors"
+              >
+                <ChevronUp size={14} />
+                Daralt
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>
