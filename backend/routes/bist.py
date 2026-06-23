@@ -148,44 +148,62 @@ def ping():
 def diag_endpoint():
     result = {"ok": True}
     try:
+        # STEP 1: Read cache via bist_data
         result["step"] = "read_cache"
         from services.bist_data import _read_cache
         cached = _read_cache("GARAN.IS")
         result["cached"] = cached is not None
         result["has_bars"] = cached and "ohlc_bars" in cached
-        if cached and "ohlc_bars" in cached:
-            result["bar_count"] = len(cached["ohlc_bars"])
-
-        result["step"] = "make_df_manually"
-        import pandas as pd
-        bars = cached["ohlc_bars"]
-        df = pd.DataFrame(bars)
-        result["df_shape"] = list(df.shape)
-        result["df_cols"] = list(df.columns)
-
-        result["step"] = "to_datetime"
-        df["date"] = pd.to_datetime(df["openTime"])
-        result["dates_ok"] = True
-
-        result["step"] = "rename"
-        df = df.rename(columns={
-            "open": "Open", "high": "High", "low": "Low",
-            "close": "Close", "tickVolume": "Volume"
-        })
-        result["rename_ok"] = True
-
-        result["step"] = "cast_int"
-        df["Volume"] = df["Volume"].astype(int)
-        result["volume_type"] = str(df["Volume"].dtype)
-
-        result["step"] = "select_cols"
-        df = df[["date", "Open", "High", "Low", "Close", "Volume"]]
-        df.set_index("date", inplace=True)
-        result["final_shape"] = list(df.shape)
-        result["close_type"] = str(type(df.iloc[0]["Close"]))
     except BaseException as e:
+        import traceback
         result["error"] = str(e)
         result["error_type"] = str(type(e).__name__)
+        result["tb"] = traceback.format_exc()[-300:]
+
+    try:
+        # STEP 2: Create small DataFrame independently (no cache)
+        result["step"] = "simple_df"
+        import pandas as pd
+        data = [{"Open": 100.0, "High": 101.0, "Low": 99.0, "Close": 100.5, "Volume": 1000}]
+        df = pd.DataFrame(data)
+        result["df_ok"] = not df.empty
+        result["df_shape"] = list(df.shape)
+    except BaseException as e:
+        import traceback
+        result["s2_error"] = str(e)
+        result["s2_type"] = str(type(e).__name__)
+        result["s2_tb"] = traceback.format_exc()[-300:]
+
+    try:
+        # STEP 3: Call _bars_to_df on cached bars
+        result["step"] = "bars_to_df"
+        from services.bist_data import _bars_to_df
+        if cached and "ohlc_bars" in cached:
+            df2 = _bars_to_df(cached["ohlc_bars"])
+            result["bars_df_ok"] = df2 is not None
+            if df2 is not None:
+                result["bars_shape"] = list(df2.shape)
+    except BaseException as e:
+        import traceback
+        result["s3_error"] = str(e)
+        result["s3_type"] = str(type(e).__name__)
+        result["s3_tb"] = traceback.format_exc()[-300:]
+
+    try:
+        # STEP 4: Call get_bist_history
+        result["step"] = "get_history"
+        h = get_bist_history("GARAN.IS", period="5d")
+        result["hist_ok"] = h is not None
+        if h is not None:
+            result["hist_rows"] = len(h)
+            result["hist_empty"] = bool(h.empty)
+    except BaseException as e:
+        import traceback
+        result["s4_error"] = str(e)
+        result["s4_type"] = str(type(e).__name__)
+        result["s4_tb"] = traceback.format_exc()[-300:]
+
+    result["step"] = "done"
     return jsonify(result)
 
 
