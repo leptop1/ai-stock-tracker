@@ -1,11 +1,10 @@
 import json
 import os
 import time
-import pandas as pd
 from flask import Blueprint, jsonify, request
 from services.bist_data import get_bist_info, get_bist_price, get_bist_prices_batch, get_cached_ohlc_data
 from services.signals import generate_signal
-from services.indicators import calculate_all_indicators
+from services.indicators_np import compute_all_indicators
 
 bist_bp = Blueprint("bist", __name__)
 
@@ -185,16 +184,15 @@ def instrument_detail(symbol):
         ohlc = get_cached_ohlc_data(symbol)
         indicators = {"latest": {}}
         if ohlc and len(ohlc.get("close", [])) > 10:
-            df = pd.DataFrame({
-                "Close": ohlc["close"],
-                "High": ohlc.get("high", ohlc["close"]),
-                "Low": ohlc.get("low", ohlc["close"]),
-                "Volume": ohlc.get("volume", [0] * len(ohlc["close"])),
-                "Open": ohlc.get("open", ohlc["close"]),
-            })
-            df.index = pd.to_datetime(ohlc.get("dates", []))
             try:
-                indicators = calculate_all_indicators(df)
+                indicators = compute_all_indicators(
+                    ohlc.get("dates", []),
+                    ohlc.get("open", []),
+                    ohlc.get("high", ohlc.get("close", [])),
+                    ohlc.get("low", ohlc.get("close", [])),
+                    ohlc["close"],
+                    ohlc.get("volume", [0] * len(ohlc["close"])),
+                )
             except BaseException:
                 indicators = {"latest": {}}
         signal = generate_signal(indicators.get("latest", {}))
@@ -233,15 +231,14 @@ def instrument_signal(symbol):
     latest = {}
     if ohlc and len(ohlc.get("close", [])) > 10:
         try:
-            df = pd.DataFrame({
-                "Close": ohlc["close"],
-                "High": ohlc.get("high", ohlc["close"]),
-                "Low": ohlc.get("low", ohlc["close"]),
-                "Volume": ohlc.get("volume", [0] * len(ohlc["close"])),
-                "Open": ohlc.get("open", ohlc["close"]),
-            })
-            df.index = pd.to_datetime(ohlc.get("dates", []))
-            ind = calculate_all_indicators(df)
+            ind = compute_all_indicators(
+                ohlc.get("dates", []),
+                ohlc.get("open", []),
+                ohlc.get("high", ohlc.get("close", [])),
+                ohlc.get("low", ohlc.get("close", [])),
+                ohlc["close"],
+                ohlc.get("volume", [0] * len(ohlc["close"])),
+            )
             latest = ind.get("latest", {})
         except BaseException:
             latest = {}
