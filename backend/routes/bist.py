@@ -146,35 +146,7 @@ def ping():
 
 @bist_bp.route("/_dt")
 def diag_endpoint():
-    import os, time, json
-    result = {"ok": True, "step": "start"}
-    try:
-        result["step"] = "price"
-        t0 = time.time()
-        p = get_bist_price("GARAN.IS")
-        result["price_ms"] = round((time.time() - t0) * 1000)
-        result["price"] = p.get("price") if p else None
-        result["price_src"] = p.get("source") if p else None
-
-        result["step"] = "history"
-        t0 = time.time()
-        h = get_bist_history("GARAN.IS", period="5d")
-        result["history_ms"] = round((time.time() - t0) * 1000)
-        result["history_rows"] = len(h) if h is not None else 0
-
-        result["step"] = "info"
-        t0 = time.time()
-        info = get_bist_info("GARAN.IS")
-        result["info_ms"] = round((time.time() - t0) * 1000)
-        result["has_price_key"] = info and info.get("price") is not None
-    except Exception as e:
-        import traceback
-        result["error"] = str(e)
-        result["error_type"] = str(type(e).__name__)
-        result["error_tb"] = traceback.format_exc()[:500]
-        result["step"] = "ERROR"
-    result["step"] = "end"
-    return jsonify(result)
+    return jsonify({"ok": True, "msg": "diag endpoint"})
 
 
 @bist_bp.route("/<path:symbol>")
