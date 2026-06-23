@@ -156,16 +156,36 @@ def diag_endpoint():
         if cached and "ohlc_bars" in cached:
             result["bar_count"] = len(cached["ohlc_bars"])
 
-        result["step"] = "bars_to_df"
-        from services.bist_data import _bars_to_df
-        h = _bars_to_df(cached["ohlc_bars"])
-        result["df_ok"] = h is not None
-        if h is not None:
-            result["df_rows"] = len(h)
+        result["step"] = "make_df_manually"
+        import pandas as pd
+        bars = cached["ohlc_bars"]
+        df = pd.DataFrame(bars)
+        result["df_shape"] = list(df.shape)
+        result["df_cols"] = list(df.columns)
+
+        result["step"] = "to_datetime"
+        df["date"] = pd.to_datetime(df["openTime"])
+        result["dates_ok"] = True
+
+        result["step"] = "rename"
+        df = df.rename(columns={
+            "open": "Open", "high": "High", "low": "Low",
+            "close": "Close", "tickVolume": "Volume"
+        })
+        result["rename_ok"] = True
+
+        result["step"] = "cast_int"
+        df["Volume"] = df["Volume"].astype(int)
+        result["volume_type"] = str(df["Volume"].dtype)
+
+        result["step"] = "select_cols"
+        df = df[["date", "Open", "High", "Low", "Close", "Volume"]]
+        df.set_index("date", inplace=True)
+        result["final_shape"] = list(df.shape)
+        result["close_type"] = str(type(df.iloc[0]["Close"]))
     except BaseException as e:
         result["error"] = str(e)
         result["error_type"] = str(type(e).__name__)
-        result["step"] = "EXC"
     return jsonify(result)
 
 
