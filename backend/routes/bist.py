@@ -148,33 +148,31 @@ def ping():
 def diag_endpoint():
     import os, time, json
     result = {"ok": True, "step": "start"}
-
     try:
-        from services.bist_data import _read_cache, _bars_to_df
-        result["step"] = "read_cache"
-        cached = _read_cache("GARAN.IS")
-        result["cached_type"] = str(type(cached).__name__) if cached else "None"
-        result["has_ohlc"] = cached and "ohlc_bars" in cached
+        result["step"] = "price"
+        t0 = time.time()
+        p = get_bist_price("GARAN.IS")
+        result["price_ms"] = round((time.time() - t0) * 1000)
+        result["price"] = p.get("price") if p else None
+        result["price_src"] = p.get("source") if p else None
 
-        if cached and "ohlc_bars" in cached and cached["ohlc_bars"]:
-            result["step"] = "bars_to_df"
-            bars = cached["ohlc_bars"]
-            result["n_bars"] = len(bars)
-            result["bar_0_keys"] = list(bars[0].keys()) if bars else []
+        result["step"] = "history"
+        t0 = time.time()
+        h = get_bist_history("GARAN.IS", period="5d")
+        result["history_ms"] = round((time.time() - t0) * 1000)
+        result["history_rows"] = len(h) if h is not None else 0
 
-            result["step"] = "calling _bars_to_df"
-            df = _bars_to_df(bars)
-            result["df_type"] = str(type(df).__name__)
-            result["df_empty"] = df is None or df.empty
-            if df is not None:
-                result["df_len"] = len(df)
-                result["df_cols"] = list(df.columns)
+        result["step"] = "info"
+        t0 = time.time()
+        info = get_bist_info("GARAN.IS")
+        result["info_ms"] = round((time.time() - t0) * 1000)
+        result["has_price_key"] = info and info.get("price") is not None
     except Exception as e:
         import traceback
         result["error"] = str(e)
-        result["tb"] = traceback.format_exc()[:800]
+        result["error_type"] = str(type(e).__name__)
+        result["error_tb"] = traceback.format_exc()[:500]
         result["step"] = "ERROR"
-
     result["step"] = "end"
     return jsonify(result)
 
