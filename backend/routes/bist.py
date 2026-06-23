@@ -2,8 +2,7 @@ import json
 import os
 import time
 from flask import Blueprint, jsonify, request
-from services.bist_data import get_bist_history, get_bist_info, get_bist_price, get_bist_prices_batch
-from services.indicators import calculate_all_indicators
+from services.bist_data import get_bist_info, get_bist_price, get_bist_prices_batch, get_cached_ohlc_data
 from services.signals import generate_signal
 
 bist_bp = Blueprint("bist", __name__)
@@ -177,28 +176,16 @@ def instrument_detail(symbol):
 @bist_bp.route("/<path:symbol>/history")
 def instrument_history(symbol):
     try:
-        df = get_bist_history(symbol, period="6mo")
+        data = get_cached_ohlc_data(symbol)
+        if data:
+            return jsonify(data)
     except Exception:
-        df = None
-    if df is None or df.empty:
-        return jsonify({"dates": [], "open": [], "high": [], "low": [], "close": [], "volume": []})
-    dates = [str(d.date()) for d in df.index]
-    return jsonify({
-        "dates": dates,
-        "open": [round(float(v), 2) for v in df["Open"]],
-        "high": [round(float(v), 2) for v in df["High"]],
-        "low": [round(float(v), 2) for v in df["Low"]],
-        "close": [round(float(v), 2) for v in df["Close"]],
-        "volume": [int(v) for v in df["Volume"]],
-    })
+        pass
+    return jsonify({"dates": [], "open": [], "high": [], "low": [], "close": [], "volume": []})
 
 
 @bist_bp.route("/<path:symbol>/signal")
 def instrument_signal(symbol):
-    try:
-        df = get_bist_history(symbol, period="3mo")
-    except Exception:
-        df = None
-    indicators = calculate_all_indicators(df) if df is not None and not df.empty else {"latest": {}}
+    indicators = {"latest": {}}
     signal = generate_signal(indicators["latest"])
     return jsonify(signal)

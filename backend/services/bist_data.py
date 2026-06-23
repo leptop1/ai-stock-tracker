@@ -168,6 +168,38 @@ def _cache_biquote_ohlc(name: str, df: pd.DataFrame):
         pass
 
 
+def get_cached_ohlc_data(symbol: str) -> dict | None:
+    from datetime import datetime
+    path = _cache_path(symbol)
+    try:
+        if not os.path.exists(path):
+            return None
+        with open(path) as f:
+            cached = json.load(f)
+        bars = cached.get("ohlc_bars", [])
+        if not bars:
+            return None
+        dates, open_p, high, low, close, volume = [], [], [], [], [], []
+        for b in bars:
+            ot = b.get("openTime", "")
+            if isinstance(ot, (int, float)):
+                ot = datetime.fromtimestamp(ot / 1000).strftime("%Y-%m-%d")
+            else:
+                ot = str(ot)[:10]
+            dates.append(ot)
+            open_p.append(round(float(b.get("open", b.get("o", 0))), 2))
+            high.append(round(float(b.get("high", b.get("h", 0))), 2))
+            low.append(round(float(b.get("low", b.get("l", 0))), 2))
+            close.append(round(float(b.get("close", b.get("c", 0))), 2))
+            volume.append(int(b.get("tickVolume", b.get("v", 0))))
+        return {
+            "dates": dates, "open": open_p, "high": high,
+            "low": low, "close": close, "volume": volume,
+        }
+    except Exception:
+        return None
+
+
 def _bars_to_df(bars: list) -> pd.DataFrame | None:
     if not bars:
         return None
