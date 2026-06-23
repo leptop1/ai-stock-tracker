@@ -26,6 +26,11 @@
       "category": "GYO"
     },
     {
+      "symbol": "ADPOL.IS",
+      "name": "AdPOL",
+      "category": "Kimya"
+    },
+    {
       "symbol": "AEFES.IS",
       "name": "Anadolu Efes",
       "category": "Gıda"
@@ -136,6 +141,16 @@
       "category": "GYO"
     },
     {
+      "symbol": "ALMAD.IS",
+      "name": "Altınyağ Madencilik",
+      "category": "Madencilik"
+    },
+    {
+      "symbol": "ALMTL.IS",
+      "name": "Alumetal",
+      "category": "Metal"
+    },
+    {
       "symbol": "ANHYT.IS",
       "name": "Anadolu Hayat Emeklilik",
       "category": "Sigorta"
@@ -179,6 +194,11 @@
       "symbol": "ASGYO.IS",
       "name": "Asce GYO",
       "category": "GYO"
+    },
+    {
+      "symbol": "ASLAN.IS",
+      "name": "Aslan Çimento",
+      "category": "İnşaat"
     },
     {
       "symbol": "ASTOR.IS",
@@ -286,9 +306,24 @@
       "category": "İnşaat"
     },
     {
+      "symbol": "BATIC.IS",
+      "name": "Batı Çimento",
+      "category": "İnşaat"
+    },
+    {
+      "symbol": "BATIS.IS",
+      "name": "Batısöke",
+      "category": "İnşaat"
+    },
+    {
       "symbol": "BAYRK.IS",
       "name": "Bayrak EBT",
       "category": "Teknoloji"
+    },
+    {
+      "symbol": "BEBEN.IS",
+      "name": "Bebe Bebek",
+      "category": "Perakende"
     },
     {
       "symbol": "BERA.IS",
@@ -299,6 +334,11 @@
       "symbol": "BEYAZ.IS",
       "name": "Beyaz Filo",
       "category": "Kiralama"
+    },
+    {
+      "symbol": "BEZO.IS",
+      "name": "Bezo",
+      "category": "Teknoloji"
     },
     {
       "symbol": "BFREN.IS",
@@ -329,6 +369,11 @@
       "symbol": "BJKAS.IS",
       "name": "Beşiktaş",
       "category": "Spor"
+    },
+    {
+      "symbol": "BKART.IS",
+      "name": "Bkart",
+      "category": "Teknoloji"
     },
     {
       "symbol": "BLCYT.IS",
@@ -386,6 +431,11 @@
       "category": "İnşaat"
     },
     {
+      "symbol": "BURFA.IS",
+      "name": "Burfa",
+      "category": "Turizm"
+    },
+    {
       "symbol": "BVSAN.IS",
       "name": "Bv Sanayi",
       "category": "Metal"
@@ -394,6 +444,11 @@
       "symbol": "CANTE.IS",
       "name": "Can2 Termik",
       "category": "Enerji"
+    },
+    {
+      "symbol": "CARFA.IS",
+      "name": "Carrefoursa",
+      "category": "Perakende"
     },
     {
       "symbol": "CASA.IS",
@@ -464,6 +519,11 @@
       "symbol": "CVKMD.IS",
       "name": "CVK Madencilik",
       "category": "Madencilik"
+    },
+    {
+      "symbol": "DAGHL.IS",
+      "name": "Daghan Holding",
+      "category": "Holding"
     },
     {
       "symbol": "DAGI.IS",
@@ -541,6 +601,16 @@
       "category": "Otomotiv"
     },
     {
+      "symbol": "DOBUR.IS",
+      "name": "Doğan Burda",
+      "category": "Medya"
+    },
+    {
+      "symbol": "DOCKS.IS",
+      "name": "Docks",
+      "category": "Tekstil"
+    },
+    {
       "symbol": "DOFER.IS",
       "name": "Dofer",
       "category": "Metal"
@@ -581,9 +651,19 @@
       "category": "Teknoloji"
     },
     {
+      "symbol": "EDER.IS",
+      "name": "Eder",
+      "category": "GYO"
+    },
+    {
       "symbol": "EDIP.IS",
       "name": "Edip Gayrimenkul",
       "category": "GYO"
+    },
+    {
+      "symbol": "EFORC.IS",
+      "name": "Efor Çay",
+      "category": "Gıda"
     },
     {
       "symbol": "EGEEN.IS",
@@ -609,6 +689,11 @@
       "symbol": "EKGYO.IS",
       "name": "Emlak Konut GYO",
       "category": "GYO"
+    },
+    {
+      "symbol": "EKOEY.IS",
+      "name": "Eko Filtre",
+      "category": "Otomotiv Yan"
     },
     {
       "symbol": "EKOS.IS",
@@ -701,6 +786,16 @@
       "category": "Finans"
     },
     {
+      "symbol": "EUROP.IS",
+      "name": "Europower",
+      "category": "Enerji"
+    },
+    {
+      "symbol": "EYL.IS",
+      "name": "EYL",
+      "category": "Finans"
+    },
+    {
       "symbol": "FADE.IS",
       "name": "Fade",
       "category": "Teknoloji"
@@ -709,6 +804,11 @@
       "symbol": "FENER.IS",
       "name": "Fenerbahçe",
       "category": "Spor"
+    },
+    {
+      "symbol": "FINTK.IS",
+      "name": "Finturk",
+      "category": "Finans"
     },
     {
       "symbol": "FLAP.IS",
@@ -756,6 +856,11 @@
       "category": "Finans"
     },
     {
+      "symbol": "GEDIZ.IS",
+      "name": "Gediz",
+      "category": "Enerji"
+    },
+    {
       "symbol": "GEDIK.IS",
       "name": "Gedik Yatırım",
       "category": "Finans"
@@ -801,9 +906,19 @@
       "category": "Girişim"
     },
     {
+      "symbol": "GPHOL.IS",
+      "name": "Gp Holding",
+      "category": "Holding"
+    },
+    {
       "symbol": "GRNYO.IS",
       "name": "Garen GYO",
       "category": "GYO"
+    },
+    {
+      "symbol": "GROAT.IS",
+      "name": "Groat",
+      "category": "Teknoloji"
     },
     {
       "symbol": "GRSEL.IS",
@@ -821,9 +936,24 @@
       "category": "Kimya"
     },
     {
+      "symbol": "GULKM.IS",
+      "name": "Gül Kimya",
+      "category": "Kimya"
+    },
+    {
+      "symbol": "GUNDO.IS",
+      "name": "Gündoğdu",
+      "category": "Tekstil"
+    },
+    {
       "symbol": "GWIND.IS",
       "name": "Galata Wind",
       "category": "Enerji"
+    },
+    {
+      "symbol": "HACGY.IS",
+      "name": "Hacılar GYO",
+      "category": "GYO"
     },
     {
       "symbol": "HALKB.IS",
@@ -864,6 +994,11 @@
       "symbol": "HRKET.IS",
       "name": "Hareket",
       "category": "Savunma"
+    },
+    {
+      "symbol": "HTTET.IS",
+      "name": "Httet",
+      "category": "Teknoloji"
     },
     {
       "symbol": "HUBVC.IS",
@@ -916,6 +1051,11 @@
       "category": "Teknoloji"
     },
     {
+      "symbol": "INFRA.IS",
+      "name": "İnfra",
+      "category": "Teknoloji"
+    },
+    {
       "symbol": "INTEK.IS",
       "name": "İntek",
       "category": "Teknoloji"
@@ -924,6 +1064,11 @@
       "symbol": "INVEO.IS",
       "name": "İnveo",
       "category": "Finans"
+    },
+    {
+      "symbol": "IPEKE.IS",
+      "name": "İpek Doğal Enerji",
+      "category": "Enerji"
     },
     {
       "symbol": "ISATR.IS",
@@ -971,6 +1116,11 @@
       "category": "Finans"
     },
     {
+      "symbol": "IZDCO.IS",
+      "name": "İz Demir Çelik",
+      "category": "Metal"
+    },
+    {
       "symbol": "IZENR.IS",
       "name": "İz Enerji",
       "category": "Enerji"
@@ -981,6 +1131,11 @@
       "category": "Gıda"
     },
     {
+      "symbol": "IZMIR.IS",
+      "name": "İzmir Fırça",
+      "category": "Kimya"
+    },
+    {
       "symbol": "JANTS.IS",
       "name": "Jantsa",
       "category": "Otomotiv Yan"
@@ -989,6 +1144,11 @@
       "symbol": "KAPLM.IS",
       "name": "Kaplamin",
       "category": "Ambalaj"
+    },
+    {
+      "symbol": "KARA.IS",
+      "name": "Karadeniz",
+      "category": "Enerji"
     },
     {
       "symbol": "KARTN.IS",
@@ -1026,6 +1186,11 @@
       "category": "Gıda"
     },
     {
+      "symbol": "KERVT.IS",
+      "name": "Kervansaray",
+      "category": "Turizm"
+    },
+    {
       "symbol": "KERVN.IS",
       "name": "Kervan Gıda",
       "category": "Gıda"
@@ -1046,9 +1211,19 @@
       "category": "Kimya"
     },
     {
+      "symbol": "KLUR.IS",
+      "name": "Kılıç",
+      "category": "Kimya"
+    },
+    {
       "symbol": "KMPUR.IS",
       "name": "Kimpur",
       "category": "Kimya"
+    },
+    {
+      "symbol": "KNGMS.IS",
+      "name": "Kino",
+      "category": "Turizm"
     },
     {
       "symbol": "KNFRT.IS",
@@ -1079,6 +1254,26 @@
       "symbol": "KORDS.IS",
       "name": "Kordsa",
       "category": "Tekstil"
+    },
+    {
+      "symbol": "KOZAA.IS",
+      "name": "Koza Madencilik",
+      "category": "Madencilik"
+    },
+    {
+      "symbol": "KOZAL.IS",
+      "name": "Koza Altın",
+      "category": "Madencilik"
+    },
+    {
+      "symbol": "KRALD.IS",
+      "name": "Kral",
+      "category": "Medya"
+    },
+    {
+      "symbol": "KRBN.IS",
+      "name": "Kerevitaş",
+      "category": "Gıda"
     },
     {
       "symbol": "KRDMA.IS",
@@ -1116,6 +1311,16 @@
       "category": "Turizm"
     },
     {
+      "symbol": "KTB.IS",
+      "name": "Kütahya",
+      "category": "Kimya"
+    },
+    {
+      "symbol": "KTLYO.IS",
+      "name": "Kütahya GYO",
+      "category": "GYO"
+    },
+    {
       "symbol": "KTSKR.IS",
       "name": "Katsigros",
       "category": "Gıda"
@@ -1129,6 +1334,11 @@
       "symbol": "KUVVA.IS",
       "name": "Kuvva",
       "category": "Teknoloji"
+    },
+    {
+      "symbol": "KYGAZ.IS",
+      "name": "Kayseri Gaz",
+      "category": "Enerji"
     },
     {
       "symbol": "LIDER.IS",
@@ -1164,6 +1374,11 @@
       "symbol": "LUKSK.IS",
       "name": "Lüks Kadife",
       "category": "Tekstil"
+    },
+    {
+      "symbol": "MACKA.IS",
+      "name": "Maçkolik",
+      "category": "Teknoloji"
     },
     {
       "symbol": "MAGEN.IS",
@@ -1221,6 +1436,21 @@
       "category": "Metal"
     },
     {
+      "symbol": "MEMSA.IS",
+      "name": "Memsa",
+      "category": "Tekstil"
+    },
+    {
+      "symbol": "MENSA.IS",
+      "name": "Mensa",
+      "category": "Tekstil"
+    },
+    {
+      "symbol": "MERAL.IS",
+      "name": "Meral",
+      "category": "Metal"
+    },
+    {
       "symbol": "MERIT.IS",
       "name": "Merit Turizm",
       "category": "Turizm"
@@ -1236,6 +1466,11 @@
       "category": "Holding"
     },
     {
+      "symbol": "METUR.IS",
+      "name": "Metur",
+      "category": "Turizm"
+    },
+    {
       "symbol": "MGROS.IS",
       "name": "Migros",
       "category": "Perakende"
@@ -1246,9 +1481,29 @@
       "category": "Teknoloji"
     },
     {
+      "symbol": "MIPAZ.IS",
+      "name": "Mipa",
+      "category": "Perakende"
+    },
+    {
+      "symbol": "MKGYO.IS",
+      "name": "Mk GYO",
+      "category": "GYO"
+    },
+    {
       "symbol": "MNDRS.IS",
       "name": "Menderes Tekstil",
       "category": "Tekstil"
+    },
+    {
+      "symbol": "MNTAS.IS",
+      "name": "Mantaş",
+      "category": "Metal"
+    },
+    {
+      "symbol": "MOBIL.IS",
+      "name": "Mobil",
+      "category": "Teknoloji"
     },
     {
       "symbol": "MOGAN.IS",
@@ -1256,9 +1511,19 @@
       "category": "Enerji"
     },
     {
+      "symbol": "MOLTK.IS",
+      "name": "Moltas",
+      "category": "Kimya"
+    },
+    {
       "symbol": "MPARK.IS",
       "name": "MLP Sağlık",
       "category": "Sağlık"
+    },
+    {
+      "symbol": "MRCE.IS",
+      "name": "Merce",
+      "category": "Teknoloji"
     },
     {
       "symbol": "MRGYO.IS",
@@ -1276,6 +1541,11 @@
       "category": "Teknoloji"
     },
     {
+      "symbol": "MUTLU.IS",
+      "name": "Mutlu Akü",
+      "category": "Otomotiv Yan"
+    },
+    {
       "symbol": "MZHLD.IS",
       "name": "Mazhar Zorlu",
       "category": "Tekstil"
@@ -1284,6 +1554,11 @@
       "symbol": "NATEN.IS",
       "name": "Naten",
       "category": "Enerji"
+    },
+    {
+      "symbol": "NEFYL.IS",
+      "name": "Nef Yayın",
+      "category": "Medya"
     },
     {
       "symbol": "NETAS.IS",
@@ -1326,14 +1601,29 @@
       "category": "Gıda"
     },
     {
+      "symbol": "OLMIP.IS",
+      "name": "Olmi",
+      "category": "Tekstil"
+    },
+    {
       "symbol": "ONCSM.IS",
       "name": "Oncosem",
       "category": "Sağlık"
     },
     {
+      "symbol": "ONRYE.IS",
+      "name": "Onur Yem",
+      "category": "Gıda"
+    },
+    {
       "symbol": "ORCAY.IS",
       "name": "Orçay",
       "category": "Gıda"
+    },
+    {
+      "symbol": "ORDIN.IS",
+      "name": "Ordina",
+      "category": "Teknoloji"
     },
     {
       "symbol": "ORGE.IS",
@@ -1344,6 +1634,11 @@
       "symbol": "ORMA.IS",
       "name": "Orma",
       "category": "Metal"
+    },
+    {
+      "symbol": "OSK.IS",
+      "name": "Osk",
+      "category": "Savunma"
     },
     {
       "symbol": "OSTIM.IS",
@@ -1364,6 +1659,16 @@
       "symbol": "OYYAT.IS",
       "name": "Oyak Yatırım",
       "category": "Finans"
+    },
+    {
+      "symbol": "OZBAL.IS",
+      "name": "Özbal",
+      "category": "Gıda"
+    },
+    {
+      "symbol": "OZDER.IS",
+      "name": "Özderici",
+      "category": "GYO"
     },
     {
       "symbol": "OZGYO.IS",
@@ -1451,6 +1756,16 @@
       "category": "Turizm"
     },
     {
+      "symbol": "PMPRO.IS",
+      "name": "Pmp",
+      "category": "Kimya"
+    },
+    {
+      "symbol": "PNLUK.IS",
+      "name": "Pınar Un",
+      "category": "Gıda"
+    },
+    {
       "symbol": "PNSUT.IS",
       "name": "Pınar Süt",
       "category": "Gıda"
@@ -1476,14 +1791,39 @@
       "category": "Teknoloji"
     },
     {
+      "symbol": "PSD.IS",
+      "name": "Psd",
+      "category": "Teknoloji"
+    },
+    {
+      "symbol": "PTTAS.IS",
+      "name": "PTT",
+      "category": "Ulaşım"
+    },
+    {
+      "symbol": "QNBFB.IS",
+      "name": "QNB Finansbank",
+      "category": "Bankacılık"
+    },
+    {
       "symbol": "QUAGR.IS",
       "name": "Qua Granite",
       "category": "İnşaat"
     },
     {
+      "symbol": "RALRH.IS",
+      "name": "RAL",
+      "category": "Kimya"
+    },
+    {
       "symbol": "RAYSG.IS",
       "name": "Ray Sigorta",
       "category": "Sigorta"
+    },
+    {
+      "symbol": "REC.IS",
+      "name": "Rec",
+      "category": "Teknoloji"
     },
     {
       "symbol": "RGYAS.IS",
@@ -1516,9 +1856,19 @@
       "category": "Otomotiv Yan"
     },
     {
+      "symbol": "SAGYO.IS",
+      "name": "Sağlam GYO",
+      "category": "GYO"
+    },
+    {
       "symbol": "SAHOL.IS",
       "name": "Sabancı Holding",
       "category": "Holding"
+    },
+    {
+      "symbol": "SAKAS.IS",
+      "name": "Sakas",
+      "category": "Kimya"
     },
     {
       "symbol": "SAMAT.IS",
@@ -1571,6 +1921,16 @@
       "category": "Teknoloji"
     },
     {
+      "symbol": "SELGD.IS",
+      "name": "Selva Gıda",
+      "category": "Gıda"
+    },
+    {
+      "symbol": "SERVI.IS",
+      "name": "Servet",
+      "category": "GYO"
+    },
+    {
       "symbol": "SEYKM.IS",
       "name": "Seyitler Kimya",
       "category": "Kimya"
@@ -1584,6 +1944,11 @@
       "symbol": "SISE.IS",
       "name": "Şişe Cam",
       "category": "Cam"
+    },
+    {
+      "symbol": "SIRKET.IS",
+      "name": "Sirket",
+      "category": "Diğer"
     },
     {
       "symbol": "SKBNK.IS",
@@ -1606,9 +1971,24 @@
       "category": "Teknoloji"
     },
     {
+      "symbol": "SMRT.IS",
+      "name": "Smart",
+      "category": "Teknoloji"
+    },
+    {
       "symbol": "SNICA.IS",
       "name": "Sanica",
       "category": "Metal"
+    },
+    {
+      "symbol": "SNKRN.IS",
+      "name": "Sanko",
+      "category": "Tekstil"
+    },
+    {
+      "symbol": "SODA.IS",
+      "name": "Soda Sanayii",
+      "category": "Kimya"
     },
     {
       "symbol": "SOKM.IS",
@@ -1619,6 +1999,16 @@
       "symbol": "SONME.IS",
       "name": "Sönmez",
       "category": "Tekstil"
+    },
+    {
+      "symbol": "SOZCM.IS",
+      "name": "Sözcü",
+      "category": "Medya"
+    },
+    {
+      "symbol": "SPACE.IS",
+      "name": "Space",
+      "category": "Teknoloji"
     },
     {
       "symbol": "SRVGY.IS",
@@ -1639,6 +2029,11 @@
       "symbol": "TABGD.IS",
       "name": "Tab Gıda",
       "category": "Gıda"
+    },
+    {
+      "symbol": "TACTR.IS",
+      "name": "Tac",
+      "category": "Tekstil"
     },
     {
       "symbol": "TARKM.IS",
@@ -1691,6 +2086,11 @@
       "category": "Ulaşım"
     },
     {
+      "symbol": "TIBIL.IS",
+      "name": "Tibil",
+      "category": "Teknoloji"
+    },
+    {
       "symbol": "TKFEN.IS",
       "name": "Tekfen",
       "category": "İnşaat"
@@ -1704,6 +2104,11 @@
       "symbol": "TLMAN.IS",
       "name": "Türkliman",
       "category": "Ulaşım"
+    },
+    {
+      "symbol": "TMCTR.IS",
+      "name": "Tmcter",
+      "category": "Teknoloji"
     },
     {
       "symbol": "TMSN.IS",
@@ -1729,6 +2134,11 @@
       "symbol": "TRILC.IS",
       "name": "Türk İlaç",
       "category": "Sağlık"
+    },
+    {
+      "symbol": "TRKCM.IS",
+      "name": "Trakyacam",
+      "category": "Cam"
     },
     {
       "symbol": "TSKB.IS",
@@ -1776,9 +2186,19 @@
       "category": "Sigorta"
     },
     {
+      "symbol": "TURTL.IS",
+      "name": "Turtles",
+      "category": "Teknoloji"
+    },
+    {
       "symbol": "UFUK.IS",
       "name": "Ufuk Yatırım",
       "category": "Finans"
+    },
+    {
+      "symbol": "UKIM.IS",
+      "name": "Ukime",
+      "category": "Kimya"
     },
     {
       "symbol": "ULAS.IS",
@@ -1801,6 +2221,16 @@
       "category": "Finans"
     },
     {
+      "symbol": "UNVLY.IS",
+      "name": "Unvly",
+      "category": "Teknoloji"
+    },
+    {
+      "symbol": "UPLIN.IS",
+      "name": "Uplink",
+      "category": "Teknoloji"
+    },
+    {
       "symbol": "USAK.IS",
       "name": "Uşak Seramik",
       "category": "İnşaat"
@@ -1821,6 +2251,16 @@
       "category": "Finans"
     },
     {
+      "symbol": "VARYO.IS",
+      "name": "Varyo",
+      "category": "Teknoloji"
+    },
+    {
+      "symbol": "VBTSO.IS",
+      "name": "Vbt",
+      "category": "Teknoloji"
+    },
+    {
       "symbol": "VERUS.IS",
       "name": "Verusa Holding",
       "category": "Holding"
@@ -1834,6 +2274,16 @@
       "symbol": "VESTL.IS",
       "name": "Vestel",
       "category": "Dayanıklı Tüketim"
+    },
+    {
+      "symbol": "VFGYO.IS",
+      "name": "Vakıf GYO",
+      "category": "GYO"
+    },
+    {
+      "symbol": "VIKNG.IS",
+      "name": "Viking Kağıt",
+      "category": "Kağıt"
     },
     {
       "symbol": "VKGYO.IS",
@@ -1866,6 +2316,11 @@
       "category": "İnşaat"
     },
     {
+      "symbol": "YEN.IS",
+      "name": "Yeni",
+      "category": "Gıda"
+    },
+    {
       "symbol": "YESIL.IS",
       "name": "Yeşil GYO",
       "category": "GYO"
@@ -1884,6 +2339,16 @@
       "symbol": "YKBNK.IS",
       "name": "Yapı Kredi",
       "category": "Bankacılık"
+    },
+    {
+      "symbol": "YKSKN.IS",
+      "name": "Yükselen",
+      "category": "Metal"
+    },
+    {
+      "symbol": "YLKTE.IS",
+      "name": "Yıldız",
+      "category": "Tekstil"
     },
     {
       "symbol": "YONGA.IS",
