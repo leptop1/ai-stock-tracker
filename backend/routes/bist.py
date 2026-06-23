@@ -146,16 +146,9 @@ def ping():
 
 @bist_bp.route("/_dt")
 def diag_endpoint():
-    result = {"ok": True, "step": "start"}
-    try:
-        result["step"] = "a"
-        df = get_bist_history("GARAN.IS", period="5d")
-        result["step"] = "b"
-        result["rows"] = len(df)
-    except Exception as e:
-        result["error"] = str(e)
-        result["step"] = "ERR"
-    return jsonify(result)
+    import os
+    m = [m for m in dir() if not m.startswith('_')]
+    return jsonify({"ok": True, "locals": m})
 
 
 @bist_bp.route("/<path:symbol>")
