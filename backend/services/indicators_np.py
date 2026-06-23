@@ -39,7 +39,7 @@ def sma(values, window):
 def compute_rsi(closes):
     if not closes or len(closes) < 15:
         return [None] * len(closes) if closes else []
-    result = [None] * (len(closes) - 1)
+    result = [None] * 14
     gains, losses = 0.0, 0.0
     for i in range(1, 15):
         diff = closes[i] - closes[i - 1]
@@ -90,7 +90,7 @@ def compute_bollinger(closes, window=20):
         empty = [None] * len(closes) if closes else []
         return {"upper": empty[:], "middle": empty[:], "lower": empty[:], "percent_b": empty[:], "bandwidth": empty[:]}
     middle = sma(closes, window)
-    upper, lower, percent_b, bandwidth = [], [], [], [], []
+    upper, lower, percent_b, bandwidth = [], [], [], []
     for i in range(len(closes)):
         m = middle[i]
         if m is None or i < window - 1:
