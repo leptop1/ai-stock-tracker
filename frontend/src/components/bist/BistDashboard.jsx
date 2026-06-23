@@ -139,7 +139,7 @@ export default function BistDashboard() {
             <div key={i} className="bg-gray-800 rounded-xl border border-gray-700 p-4 animate-pulse h-40" />
           ))}
         </div>
-      ) : !loading.summary && summaries.length === 0 ? (
+      ) : !loading.summary && summaries.length === 0 && lastRefresh ? (
         <div className="text-center py-12">
           <p className="text-gray-400 text-lg">Veri yüklenemedi</p>
           {error && <p className="text-gray-600 text-sm mt-1">{error}</p>}
