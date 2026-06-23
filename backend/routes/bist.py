@@ -146,94 +146,39 @@ def ping():
 
 @bist_bp.route("/_dt")
 def diag_endpoint():
-    result = {"ok": True}
-    try:
-        # STEP 1: Read cache via bist_data
-        result["step"] = "read_cache"
-        from services.bist_data import _read_cache
-        cached = _read_cache("GARAN.IS")
-        result["cached"] = cached is not None
-        result["has_bars"] = cached and "ohlc_bars" in cached
-    except BaseException as e:
-        import traceback
-        result["error"] = str(e)
-        result["error_type"] = str(type(e).__name__)
-        result["tb"] = traceback.format_exc()[-300:]
-
-    try:
-        # STEP 2: Create small DataFrame independently (no cache)
-        result["step"] = "simple_df"
-        import pandas as pd
-        data = [{"Open": 100.0, "High": 101.0, "Low": 99.0, "Close": 100.5, "Volume": 1000}]
-        df = pd.DataFrame(data)
-        result["df_ok"] = not df.empty
-        result["df_shape"] = list(df.shape)
-    except BaseException as e:
-        import traceback
-        result["s2_error"] = str(e)
-        result["s2_type"] = str(type(e).__name__)
-        result["s2_tb"] = traceback.format_exc()[-300:]
-
-    try:
-        # STEP 3: Call _bars_to_df on cached bars
-        result["step"] = "bars_to_df"
-        from services.bist_data import _bars_to_df
-        if cached and "ohlc_bars" in cached:
-            df2 = _bars_to_df(cached["ohlc_bars"])
-            result["bars_df_ok"] = df2 is not None
-            if df2 is not None:
-                result["bars_shape"] = list(df2.shape)
-    except BaseException as e:
-        import traceback
-        result["s3_error"] = str(e)
-        result["s3_type"] = str(type(e).__name__)
-        result["s3_tb"] = traceback.format_exc()[-300:]
-
-    try:
-        # STEP 4: Call get_bist_history
-        result["step"] = "get_history"
-        h = get_bist_history("GARAN.IS", period="5d")
-        result["hist_ok"] = h is not None
-        if h is not None:
-            result["hist_rows"] = len(h)
-            result["hist_empty"] = bool(h.empty)
-    except BaseException as e:
-        import traceback
-        result["s4_error"] = str(e)
-        result["s4_type"] = str(type(e).__name__)
-        result["s4_tb"] = traceback.format_exc()[-300:]
-
-    result["step"] = "done"
-    return jsonify(result)
+    return jsonify({"ok": True, "dt": "working"})
 
 
 @bist_bp.route("/<path:symbol>")
 def instrument_detail(symbol):
-    cache_key = f"bist:detail:{symbol}"
-    cached = _get_cached(cache_key)
-    if cached:
-        return jsonify(cached)
     try:
-        info = get_bist_info(symbol) or {}
-        df = get_bist_history(symbol, period="6mo")
-    except Exception:
-        info = {}
-        df = None
+        cache_key = f"bist:detail:{symbol}"
+        cached = _get_cached(cache_key)
+        if cached:
+            return jsonify(cached)
+        try:
+            info = get_bist_info(symbol) or {}
+            df = get_bist_history(symbol, period="6mo")
+        except BaseException:
+            info = {}
+            df = None
 
-    indicators = calculate_all_indicators(df) if df is not None and not df.empty else {"latest": {}}
-    signal = generate_signal(indicators["latest"])
-    wl = load_bist_watchlist()
-    meta = next((i for i in wl if i["symbol"] == symbol), {})
-    result = {
-        **info,
-        "symbol": symbol,
-        "name": meta.get("name", info.get("name", symbol)),
-        "category": meta.get("category", ""),
-        "indicators": indicators,
-        "signal": signal,
-    }
-    _set_cached(cache_key, result)
-    return jsonify(result)
+        indicators = calculate_all_indicators(df) if df is not None and not df.empty else {"latest": {}}
+        signal = generate_signal(indicators["latest"])
+        wl = load_bist_watchlist()
+        meta = next((i for i in wl if i["symbol"] == symbol), {})
+        result = {
+            **info,
+            "symbol": symbol,
+            "name": meta.get("name", info.get("name", symbol)),
+            "category": meta.get("category", ""),
+            "indicators": indicators,
+            "signal": signal,
+        }
+        _set_cached(cache_key, result)
+        return jsonify(result)
+    except BaseException:
+        return jsonify({"symbol": symbol, "price": None, "error": "exception"}), 500
 
 
 @bist_bp.route("/<path:symbol>/history")

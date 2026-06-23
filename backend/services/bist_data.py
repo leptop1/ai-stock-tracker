@@ -97,7 +97,7 @@ def get_bist_history(symbol: str, period: str = "3mo", interval: str = "1d") -> 
             df = _bars_to_df(cached["ohlc_bars"])
             if df is not None and not df.empty:
                 return df
-    except Exception:
+    except BaseException:
         pass
 
     try:
@@ -105,7 +105,7 @@ def get_bist_history(symbol: str, period: str = "3mo", interval: str = "1d") -> 
         if df is not None and not df.empty:
             _cache_biquote_ohlc(_strip_is(symbol), df)
             return df
-    except Exception:
+    except BaseException:
         pass
 
     try:
@@ -115,34 +115,37 @@ def get_bist_history(symbol: str, period: str = "3mo", interval: str = "1d") -> 
             df.index = df.index.tz_localize(None)
             _cache_biquote_ohlc(_strip_is(symbol), df)
             return df
-    except Exception:
+    except BaseException:
         pass
 
     return pd.DataFrame()
 
 
 def _biquote_ohlc(name: str) -> pd.DataFrame | None:
-    r = _BQ_SESSION.get(f"{_BQ_BASE}/api/{name}/ohlc?interval=1d&limit=200", timeout=10)
-    if r.status_code != 200:
+    try:
+        r = _BQ_SESSION.get(f"{_BQ_BASE}/api/{name}/ohlc?interval=1d&limit=200", timeout=10)
+        if r.status_code != 200:
+            return None
+        data = r.json()
+        bars = data.get("bars", [])
+        if not bars:
+            return None
+        closed = [b for b in bars if b.get("isOpen") is False]
+        if not closed:
+            return None
+        df = pd.DataFrame(closed)
+        df["openTime"] = pd.to_datetime(df["openTime"])
+        df = df.set_index("openTime").sort_index()
+        df.index.name = None
+        return pd.DataFrame({
+            "Open": df["open"].astype(float),
+            "High": df["high"].astype(float),
+            "Low": df["low"].astype(float),
+            "Close": df["close"].astype(float),
+            "Volume": df["tickVolume"].astype(int),
+        })
+    except BaseException:
         return None
-    data = r.json()
-    bars = data.get("bars", [])
-    if not bars:
-        return None
-    closed = [b for b in bars if b.get("isOpen") is False]
-    if not closed:
-        return None
-    df = pd.DataFrame(closed)
-    df["openTime"] = pd.to_datetime(df["openTime"])
-    df = df.set_index("openTime").sort_index()
-    df.index.name = None
-    return pd.DataFrame({
-        "Open": df["open"].astype(float),
-        "High": df["high"].astype(float),
-        "Low": df["low"].astype(float),
-        "Close": df["close"].astype(float),
-        "Volume": df["tickVolume"].astype(int),
-    })
 
 
 def _cache_biquote_ohlc(name: str, df: pd.DataFrame):
@@ -180,8 +183,7 @@ def _bars_to_df(bars: list) -> pd.DataFrame | None:
             "Close": df["close"].astype(float),
             "Volume": df["tickVolume"].astype(int),
         })
-    except Exception:
-        import traceback; traceback.print_exc()
+    except BaseException:
         return None
 
 
@@ -239,13 +241,16 @@ def get_bist_info(symbol: str) -> dict:
     except Exception:
         pass
 
-    df = get_bist_history(symbol, period="5d")
-    price = float(df["Close"].iloc[-1]) if len(df) > 0 else None
-    prev = float(df["Close"].iloc[-2]) if len(df) > 1 else price
-    return {
-        "symbol": symbol, "name": symbol,
-        "price": price, "previous_close": prev,
-        "currency": "TRY", "volume": None,
-        "market_cap": None, "52w_high": None, "52w_low": None,
-        "exchange": "IST",
-    }
+    try:
+        df = get_bist_history(symbol, period="5d")
+        price = float(df["Close"].iloc[-1]) if len(df) > 0 else None
+        prev = float(df["Close"].iloc[-2]) if len(df) > 1 else price
+        return {
+            "symbol": symbol, "name": symbol,
+            "price": price, "previous_close": prev,
+            "currency": "TRY", "volume": None,
+            "market_cap": None, "52w_high": None, "52w_low": None,
+            "exchange": "IST",
+        }
+    except BaseException:
+        return {"symbol": symbol, "price": None, "source": "info_fallback_failed"}
