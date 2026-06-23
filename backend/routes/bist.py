@@ -148,12 +148,19 @@ def ping():
 def diag_endpoint():
     result = {"ok": True}
     try:
-        result["step"] = "get_bist_price"
+        result["step1"] = "price"
         p = get_bist_price("GARAN.IS")
         result["p_ok"] = p is not None
     except BaseException as e:
-        result["err"] = str(e)
-        result["type"] = type(e).__name__
+        result["e1"] = str(e)
+
+    try:
+        result["step2"] = "info"
+        inf = get_bist_info("GARAN.IS")
+        result["i_ok"] = inf is not None and inf.get("price") is not None
+    except BaseException as e:
+        result["e2"] = str(e)
+
     return jsonify(result)
 
 
