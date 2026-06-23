@@ -146,7 +146,49 @@ def ping():
 
 @bist_bp.route("/_dt")
 def diag_endpoint():
-    return jsonify({"ok": True, "msg": "diag endpoint"})
+    import os, time
+    result = {"ok": True, "step": "start"}
+    try:
+        result["step"] = "get_bist_price"
+        t0 = time.time()
+        p = get_bist_price("GARAN.IS")
+        result["price_ms"] = round((time.time() - t0) * 1000)
+        result["price_ok"] = p is not None and p.get("price") is not None
+        result["price_val"] = p.get("price") if p else None
+
+        result["step"] = "get_bist_info"
+        t0 = time.time()
+        inf = get_bist_info("GARAN.IS")
+        result["info_ms"] = round((time.time() - t0) * 1000)
+        result["info_ok"] = inf is not None and inf.get("price") is not None
+
+        result["step"] = "get_bist_history"
+        t0 = time.time()
+        h = get_bist_history("GARAN.IS", period="5d")
+        result["hist_ms"] = round((time.time() - t0) * 1000)
+        result["hist_rows"] = len(h)
+        result["hist_empty"] = h.empty
+
+        if h is not None and not h.empty:
+            result["step"] = "calc_indicators"
+            t0 = time.time()
+            ind = calculate_all_indicators(h)
+            result["ind_ms"] = round((time.time() - t0) * 1000)
+            result["ind_keys"] = list(ind.keys())
+
+            result["step"] = "gen_signal"
+            t0 = time.time()
+            sig = generate_signal(ind["latest"])
+            result["sig_ms"] = round((time.time() - t0) * 1000)
+            result["sig"] = sig.get("signal")
+    except Exception as e:
+        import traceback
+        result["error"] = str(e)
+        result["error_type"] = str(type(e).__name__)
+        result["error_tb"] = traceback.format_exc()[:500]
+        result["step"] = "EXCEPTION"
+    result["step"] = "end"
+    return jsonify(result)
 
 
 @bist_bp.route("/<path:symbol>")
