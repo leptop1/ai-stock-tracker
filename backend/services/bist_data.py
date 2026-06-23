@@ -91,11 +91,14 @@ def get_bist_price(symbol: str) -> dict | None:
 
 
 def get_bist_history(symbol: str, period: str = "3mo", interval: str = "1d") -> pd.DataFrame:
-    cached = _read_cache(symbol)
-    if cached and "ohlc_bars" in cached and cached["ohlc_bars"]:
-        df = _bars_to_df(cached["ohlc_bars"])
-        if df is not None and not df.empty:
-            return df
+    try:
+        cached = _read_cache(symbol)
+        if cached and "ohlc_bars" in cached and cached["ohlc_bars"]:
+            df = _bars_to_df(cached["ohlc_bars"])
+            if df is not None and not df.empty:
+                return df
+    except Exception:
+        pass
 
     try:
         df = _biquote_ohlc(_strip_is(symbol))
@@ -165,17 +168,21 @@ def _cache_biquote_ohlc(name: str, df: pd.DataFrame):
 def _bars_to_df(bars: list) -> pd.DataFrame | None:
     if not bars:
         return None
-    df = pd.DataFrame(bars)
-    df["openTime"] = pd.to_datetime(df["openTime"])
-    df = df.set_index("openTime").sort_index()
-    df.index.name = None
-    return pd.DataFrame({
-        "Open": df["open"].astype(float),
-        "High": df["high"].astype(float),
-        "Low": df["low"].astype(float),
-        "Close": df["close"].astype(float),
-        "Volume": df["tickVolume"].astype(int),
-    })
+    try:
+        df = pd.DataFrame(bars)
+        df["openTime"] = pd.to_datetime(df["openTime"])
+        df = df.set_index("openTime").sort_index()
+        df.index.name = None
+        return pd.DataFrame({
+            "Open": df["open"].astype(float),
+            "High": df["high"].astype(float),
+            "Low": df["low"].astype(float),
+            "Close": df["close"].astype(float),
+            "Volume": df["tickVolume"].astype(int),
+        })
+    except Exception:
+        import traceback; traceback.print_exc()
+        return None
 
 
 def get_bist_prices_batch(symbols: list[str], max_workers: int = 20) -> dict[str, dict | None]:
