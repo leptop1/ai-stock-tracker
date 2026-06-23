@@ -1,9 +1,11 @@
 import json
 import os
 import time
+import pandas as pd
 from flask import Blueprint, jsonify, request
 from services.bist_data import get_bist_info, get_bist_price, get_bist_prices_batch, get_cached_ohlc_data
 from services.signals import generate_signal
+from services.indicators import calculate_all_indicators
 
 bist_bp = Blueprint("bist", __name__)
 
@@ -123,15 +125,42 @@ def summary():
     out = []
     for i in instruments:
         p = prices.get(i["symbol"])
+        change_pct = None
+        if p and p.get("price") is not None and p.get("previous_close") is not None and p["previous_close"]:
+            change_pct = round((p["price"] - p["previous_close"]) / p["previous_close"] * 100, 2)
+        rsi_val = None
+        avg_vol_10 = None
+        sma_20_val = None
+        ohlc = get_cached_ohlc_data(i["symbol"])
+        if ohlc and len(ohlc.get("close", [])) > 14:
+            closes = ohlc["close"]
+            gains, losses = 0.0, 0.0
+            n = min(15, len(closes))
+            for j in range(len(closes) - n, len(closes) - 1):
+                diff = closes[j + 1] - closes[j]
+                if diff > 0:
+                    gains += diff
+                else:
+                    losses -= diff
+            if losses > 0:
+                rs = (gains / (n - 1)) / (losses / (n - 1))
+                rsi_val = round(100 - (100 / (1 + rs)), 1)
+            else:
+                rsi_val = round(100.0 if gains > 0 else 50.0, 1)
+            vols = ohlc.get("volume", [])
+            if len(vols) >= 10:
+                avg_vol_10 = int(sum(vols[-10:]) / 10)
+            if len(closes) >= 20:
+                sma_20_val = round(sum(closes[-20:]) / 20, 2)
         out.append({
             "symbol": i["symbol"],
             "name": i.get("name", i["symbol"]),
             "category": i.get("category", ""),
             "price": p.get("price") if p else None,
-            "change_pct": None,
+            "change_pct": change_pct,
             "volume": p.get("volume") if p else None,
             "signal": "N/A", "score": 0, "confidence": "LOW",
-            "rsi": None, "sma_20": None, "avg_volume_10": None,
+            "rsi": rsi_val, "sma_20": sma_20_val, "avg_volume_10": avg_vol_10,
         })
     return jsonify(out)
 
@@ -153,8 +182,22 @@ def instrument_detail(symbol):
         if cached:
             return jsonify(cached)
         info = get_bist_info(symbol) or {}
+        ohlc = get_cached_ohlc_data(symbol)
         indicators = {"latest": {}}
-        signal = generate_signal(indicators["latest"])
+        if ohlc and len(ohlc.get("close", [])) > 10:
+            df = pd.DataFrame({
+                "Close": ohlc["close"],
+                "High": ohlc.get("high", ohlc["close"]),
+                "Low": ohlc.get("low", ohlc["close"]),
+                "Volume": ohlc.get("volume", [0] * len(ohlc["close"])),
+                "Open": ohlc.get("open", ohlc["close"]),
+            })
+            df.index = pd.to_datetime(ohlc.get("dates", []))
+            try:
+                indicators = calculate_all_indicators(df)
+            except BaseException:
+                indicators = {"latest": {}}
+        signal = generate_signal(indicators.get("latest", {}))
         wl = load_bist_watchlist()
         meta = next((i for i in wl if i["symbol"] == symbol), {})
         result = {
@@ -176,7 +219,9 @@ def instrument_history(symbol):
     try:
         data = get_cached_ohlc_data(symbol)
         if data:
-            return jsonify(data)
+            return jsonify({"dates": data["dates"], "open": data["open"],
+                            "high": data["high"], "low": data["low"],
+                            "close": data["close"], "volume": data["volume"]})
     except Exception:
         pass
     return jsonify({"dates": [], "open": [], "high": [], "low": [], "close": [], "volume": []})
@@ -184,6 +229,21 @@ def instrument_history(symbol):
 
 @bist_bp.route("/<path:symbol>/signal")
 def instrument_signal(symbol):
-    indicators = {"latest": {}}
-    signal = generate_signal(indicators["latest"])
+    ohlc = get_cached_ohlc_data(symbol)
+    latest = {}
+    if ohlc and len(ohlc.get("close", [])) > 10:
+        try:
+            df = pd.DataFrame({
+                "Close": ohlc["close"],
+                "High": ohlc.get("high", ohlc["close"]),
+                "Low": ohlc.get("low", ohlc["close"]),
+                "Volume": ohlc.get("volume", [0] * len(ohlc["close"])),
+                "Open": ohlc.get("open", ohlc["close"]),
+            })
+            df.index = pd.to_datetime(ohlc.get("dates", []))
+            ind = calculate_all_indicators(df)
+            latest = ind.get("latest", {})
+        except BaseException:
+            latest = {}
+    signal = generate_signal(latest)
     return jsonify(signal)
