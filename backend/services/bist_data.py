@@ -219,34 +219,45 @@ def _bars_to_df(bars: list) -> pd.DataFrame | None:
         return None
 
 
-def get_bist_prices_batch(symbols: list[str], max_workers: int = 20) -> dict[str, dict | None]:
-    results = {}
-    with ThreadPoolExecutor(max_workers=max_workers) as ex:
-        fut_map = {ex.submit(get_bist_price, s): s for s in symbols}
-        for f in as_completed(fut_map, timeout=30):
-            sym = fut_map[f]
-            try:
-                r = f.result()
-                if r:
-                    results[sym] = r
-            except Exception:
-                pass
+def _batch_price_from_cache(symbols: list[str]) -> tuple[dict[str, dict], list[str]]:
+    found, missing = {}, []
     for s in symbols:
-        if s not in results:
-            c = _read_cache(s)
-            if c and "tick" in c:
-                results[s] = c["tick"]
-            elif c and "ohlc_bars" in c and c["ohlc_bars"]:
-                bars = c["ohlc_bars"]
-                last = bars[-1]
-                prev = bars[-2].get("close", last.get("close")) if len(bars) > 1 else last.get("close")
-                results[s] = {
-                    "symbol": s,
-                    "price": last.get("close"),
-                    "previous_close": prev,
-                    "volume": last.get("tickVolume"),
-                    "source": "ohlc_cache",
-                }
+        c = _read_cache(s)
+        if c and "tick" in c:
+            found[s] = c["tick"]
+        elif c and "ohlc_bars" in c and c["ohlc_bars"]:
+            bars = c["ohlc_bars"]
+            last = bars[-1]
+            prev = bars[-2].get("close", last.get("close")) if len(bars) > 1 else last.get("close")
+            found[s] = {
+                "symbol": s,
+                "price": last.get("close"),
+                "previous_close": prev,
+                "volume": last.get("tickVolume"),
+                "source": "ohlc_cache",
+            }
+        else:
+            missing.append(s)
+    return found, missing
+
+
+def get_bist_prices_batch(symbols: list[str], max_workers: int = 20) -> dict[str, dict | None]:
+    found, missing = _batch_price_from_cache(symbols)
+    results = dict(found)
+    if missing:
+        try:
+            with ThreadPoolExecutor(max_workers=min(max_workers, len(missing))) as ex:
+                fut_map = {ex.submit(get_bist_price, s): s for s in missing}
+                for f in as_completed(fut_map, timeout=15):
+                    sym = fut_map[f]
+                    try:
+                        r = f.result()
+                        if r:
+                            results[sym] = r
+                    except Exception:
+                        pass
+        except Exception:
+            pass
     return results
 
 
