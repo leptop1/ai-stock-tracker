@@ -152,6 +152,15 @@ def diag_endpoint():
         p = get_bist_price("GARAN.IS")
         result["price_ok"] = p is not None
         result["price_type"] = str(type(p.get("price"))) if p else "none"
+
+        result["step"] = "get_bist_history"
+        h = get_bist_history("GARAN.IS", period="5d")
+        result["hist_ok"] = h is not None
+        if h is not None:
+            result["hist_rows"] = len(h)
+            result["hist_empty"] = bool(h.empty)
+            if not h.empty:
+                result["hist_close_type"] = str(type(h.iloc[0]["Close"]))
     except Exception as e:
         result["error"] = str(e)
         result["step"] = "EXC"
