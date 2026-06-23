@@ -46,7 +46,7 @@ const FILTERS = [
 ]
 
 export default function BistDashboard() {
-  const { summaries, loading, lastRefresh, fetchSummaries, selectSymbol, selectedSymbol, removeInstrument } = useBistStore()
+  const { summaries, loading, lastRefresh, error, fetchSummaries, selectSymbol, selectedSymbol, removeInstrument } = useBistStore()
   const [filter, setFilter] = useState('all')
   const [visible, setVisible] = useState(PAGE_SIZE)
 
@@ -133,14 +133,20 @@ export default function BistDashboard() {
         ))}
       </div>
 
-      {loading.summary && (!Array.isArray(summaries) || summaries.length === 0) ? (
+      {loading.summary && summaries.length === 0 ? (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {Array.from({ length: 12 }).map((_, i) => (
             <div key={i} className="bg-gray-800 rounded-xl border border-gray-700 p-4 animate-pulse h-40" />
           ))}
         </div>
-      ) : !Array.isArray(summaries) ? (
-        <div className="text-center py-12 text-gray-500">Veri yüklenemedi</div>
+      ) : !loading.summary && summaries.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-gray-400 text-lg">Veri yüklenemedi</p>
+          {error && <p className="text-gray-600 text-sm mt-1">{error}</p>}
+          <button onClick={fetchSummaries} className="mt-4 bg-gray-700 hover:bg-gray-600 text-gray-200 px-4 py-2 rounded-lg text-sm transition-colors">
+            Tekrar Dene
+          </button>
+        </div>
       ) : (
         <div className="space-y-8">
           {CAT_ORDER.map(cat => {

@@ -12,8 +12,12 @@ export const useBistStore = create((set, get) => ({
   lastRefresh: null,
 
   fetchWatchlist: async () => {
-    const watchlist = await api.getBistWatchlist()
-    set({ watchlist })
+    try {
+      const watchlist = await api.getBistWatchlist()
+      set({ watchlist })
+    } catch {
+      set({ watchlist: [] })
+    }
   },
 
   fetchAllStocks: async (query = '') => {
