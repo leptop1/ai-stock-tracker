@@ -87,24 +87,6 @@ def get_bist_price(symbol: str) -> dict | None:
                 "volume": last.get("tickVolume"),
                 "source": "ohlc_cache",
             }
-    try:
-        t = yf.Ticker(symbol, session=_YSESSION)
-        fi = t.fast_info
-        price = getattr(fi, 'last_price', None) or getattr(fi, 'previous_close', None)
-        prev = getattr(fi, 'previous_close', None) or price
-        vol = getattr(fi, 'three_month_average_volume', None)
-        if price is not None:
-            return {"symbol": symbol, "price": price, "previous_close": prev, "volume": vol, "source": "yfinance"}
-    except Exception:
-        pass
-    try:
-        df = get_bist_history(symbol, period="5d")
-        if df is not None and not df.empty:
-            price = float(df["Close"].iloc[-1])
-            prev = float(df["Close"].iloc[-2]) if len(df) > 1 else price
-            return {"symbol": symbol, "price": price, "previous_close": prev, "volume": 0, "source": "yfinance_history"}
-    except BaseException:
-        pass
     return None
 
 
