@@ -146,7 +146,46 @@ def ping():
 
 @bist_bp.route("/_dt")
 def diag_endpoint():
-    return jsonify({"ok": True, "dt": "working"})
+    result = {"ok": True}
+    # Step 1: get_bist_price
+    try:
+        result["s1"] = "get_bist_price"
+        p = get_bist_price("GARAN.IS")
+        result["p_ok"] = p is not None
+    except BaseException as e:
+        result["s1_err"] = f"{type(e).__name__}: {e}"
+    # Step 2: get_bist_info
+    try:
+        result["s2"] = "get_bist_info"
+        inf = get_bist_info("GARAN.IS")
+        result["i_ok"] = inf is not None and inf.get("price") is not None
+    except BaseException as e:
+        result["s2_err"] = f"{type(e).__name__}: {e}"
+    # Step 3: get_bist_history
+    try:
+        result["s3"] = "get_bist_history"
+        h = get_bist_history("GARAN.IS", period="6mo")
+        result["h_ok"] = h is not None and not h.empty
+    except BaseException as e:
+        result["s3_err"] = f"{type(e).__name__}: {e}"
+    # Step 4: calculate_all_indicators
+    try:
+        result["s4"] = "calc_indicators"
+        h = get_bist_history("GARAN.IS", period="6mo")
+        if h is not None and not h.empty:
+            ind = calculate_all_indicators(h)
+            result["ind_ok"] = "latest" in ind
+    except BaseException as e:
+        result["s4_err"] = f"{type(e).__name__}: {e}"
+    # Step 5: generate_signal
+    try:
+        result["s5"] = "gen_signal"
+        ind = {"latest": {}}
+        sig = generate_signal(ind["latest"])
+        result["sig_ok"] = "signal" in sig
+    except BaseException as e:
+        result["s5_err"] = f"{type(e).__name__}: {e}"
+    return jsonify(result)
 
 
 @bist_bp.route("/<path:symbol>")
