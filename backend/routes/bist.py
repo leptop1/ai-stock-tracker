@@ -161,6 +161,16 @@ def diag_endpoint():
     except BaseException as e:
         result["e2"] = str(e)
 
+    try:
+        result["step3"] = "history"
+        h = get_bist_history("GARAN.IS", period="6mo")
+        result["h_ok"] = h is not None
+        if h is not None:
+            result["h_rows"] = len(h)
+            result["h_empty"] = bool(h.empty)
+    except BaseException as e:
+        result["e3"] = str(e)
+
     return jsonify(result)
 
 
