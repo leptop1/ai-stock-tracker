@@ -146,9 +146,16 @@ def ping():
 
 @bist_bp.route("/_dt")
 def diag_endpoint():
-    import os
-    m = [m for m in dir() if not m.startswith('_')]
-    return jsonify({"ok": True, "locals": m})
+    result = {"ok": True}
+    try:
+        result["step"] = "get_bist_price"
+        p = get_bist_price("GARAN.IS")
+        result["price_ok"] = p is not None
+        result["price_type"] = str(type(p.get("price"))) if p else "none"
+    except Exception as e:
+        result["error"] = str(e)
+        result["step"] = "EXC"
+    return jsonify(result)
 
 
 @bist_bp.route("/<path:symbol>")
